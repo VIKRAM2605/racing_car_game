@@ -21,7 +21,7 @@ function imageLoaded() {
     let loadedCount = 0;
 
     if (playerSpriteSheet.onload) {
-        loadedCount += 1
+        loadedCount += 1;
     }
 
     return imageCount === loadedCount;
