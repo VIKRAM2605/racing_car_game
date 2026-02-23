@@ -17,6 +17,7 @@ export const roadSprites = {
 }
 
 export function drawScene() {
+    ctx.imageSmoothingEnabled = false;
     ctx.drawImage(
         playerSpriteSheet,
         sceneSprites.barricade.x, sceneSprites.barricade.y, sceneSprites.barricade.w, sceneSprites.barricade.h,

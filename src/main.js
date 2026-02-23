@@ -4,9 +4,15 @@ export const canvas = document.getElementById("game-canvas");
 export const ctx = canvas.getContext("2d");
 
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    drawPlayer();
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+
+    ctx.scale(dpr,dpr);
 }
 
 playerSpriteSheet.onload = drawPlayer;
