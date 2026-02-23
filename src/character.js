@@ -1,12 +1,12 @@
 import { canvas, ctx } from "./main.js";
-import { drawScene, updateScene } from "./scene.js";
+import { drawRoad, drawScene, roadSprite, updateRoad, updateScene } from "./scene.js";
 
 export const playerSpriteSheet = new Image();
 playerSpriteSheet.src = "assets/bk_cars1.a.png";
 
 export const player = {
-    x: 400,
-    y: 500,
+    x: 0,
+    y: 0,
     speed: 0.5,
     isDead: false,
     nitro: 0,
@@ -18,6 +18,11 @@ export const keys = {
     left: false,
     right: false,
     down: false,
+}
+
+export function initPlayer() {
+    player.x = canvas.width / window.devicePixelRatio / 2 - roadSprite.w * 0.7 + playerSprite.w * 2 + 30;
+    player.y = canvas.height / window.devicePixelRatio - playerSprite.h;
 }
 
 export const playerSprite = { x: 297, y: 347, w: 39, h: 83 };
@@ -85,7 +90,7 @@ export function drawPlayer() {
     ctx.drawImage(
         playerSpriteSheet,
         playerSprite.x, playerSprite.y, playerSprite.w, playerSprite.h,
-        -playerSprite.w / 2, -playerSprite.h / 2, playerSprite.w, playerSprite.h
+        -playerSprite.w / 2, -playerSprite.h / 2, playerSprite.w * 2, playerSprite.h * 2
     );
     ctx.restore();
 }
@@ -98,6 +103,8 @@ export function gameLoop(currentTime) {
     lastTime = currentTime;
     updateScene();
     updatePlayer(delta);
+    updateRoad(delta);
+    drawRoad();
     drawScene();
     drawPlayer();
 

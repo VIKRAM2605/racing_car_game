@@ -1,4 +1,7 @@
-import { drawPlayer, gameLoop, keys, playerSpriteSheet } from "./character.js";
+import { drawPlayer, gameLoop, initPlayer, keys, playerSpriteSheet } from "./character.js";
+
+export const roadSpriteSheet = new Image();
+roadSpriteSheet.src = "assets/road.svg";
 
 export const canvas = document.getElementById("game-canvas");
 export const ctx = canvas.getContext("2d");
@@ -12,7 +15,8 @@ function resizeCanvas() {
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
 
-    ctx.scale(dpr,dpr);
+    ctx.scale(dpr, dpr);
+    initPlayer();
 }
 
 playerSpriteSheet.onload = drawPlayer;
@@ -21,24 +25,15 @@ window.addEventListener("resize", () => {
     resizeCanvas();
 })
 resizeCanvas();
+initPlayer();
 
-function imageLoaded() {
-    let imageCount = 1;
-    let loadedCount = 0;
+let loadedCount = 0;
+const imageCount = 2;
 
-    if (playerSpriteSheet.onload) {
-        loadedCount += 1;
-    }
-
-    return imageCount === loadedCount;
-}
-
-function startGame() {
-    const check = imageLoaded();
-    if (check) {
+function onImageLoad() {
+    loadedCount++;
+    if (loadedCount === imageCount) {
         requestAnimationFrame(gameLoop);
-    } else {
-        console.log("game assets not yet loaded");
     }
 }
 
@@ -69,4 +64,5 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
-startGame();
+playerSpriteSheet.onload = onImageLoad;
+roadSpriteSheet.onload = onImageLoad;

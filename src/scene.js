@@ -1,5 +1,5 @@
 import { player, playerSpriteSheet } from "./character.js"
-import { canvas, ctx } from "./main.js";
+import { canvas, ctx, roadSpriteSheet } from "./main.js";
 
 export const sceneSprites = {
     barricade: { x: 506, y: 404, w: 34, h: 31, sw: 34, sh: 31 },
@@ -12,9 +12,10 @@ export const sceneSprites = {
     fireHydrant: { x: 443, y: 637, w: 24, h: 39, sw: 24, sh: 39 },
 }
 
-export const roadSprites = {
+export const roadSprite = { x: 0, y: 0, w: 540, h: 960 };
 
-}
+
+let startY = 0;
 
 export function drawScene() {
     ctx.imageSmoothingEnabled = false;
@@ -25,6 +26,51 @@ export function drawScene() {
     );
 }
 
-export function updateScene() {
+export function updateScene(delta) {
 
+}
+
+export function updateRoad(delta) {
+    startY += player.speed * delta * 1000;
+    startY = Math.floor(startY % (roadSprite.h * 0.9));
+    if(startY >= roadSprite.h * 0.9)startY =0;
+}
+
+export function drawRoad() {
+    ctx.imageSmoothingEnabled = false;
+    const drawW = roadSprite.w * 0.7;
+    const drawH = roadSprite.h * 0.9;
+
+    const logicalW = canvas.width / window.devicePixelRatio;
+    const startX = logicalW / 2 - drawW;
+
+    //left road
+    ctx.drawImage(
+        roadSpriteSheet,
+        roadSprite.x, roadSprite.y, roadSprite.w, roadSprite.h,
+        startX, startY - 1, drawW, drawH + 2
+    );
+    // left road top for illusion
+    ctx.drawImage(
+        roadSpriteSheet,
+        roadSprite.x, roadSprite.y, roadSprite.w, roadSprite.h,
+        startX, startY - drawH - 1, drawW, drawH + 2
+    );
+
+    //right road
+    ctx.save();
+    ctx.translate(startX + drawW + drawW / 2, startY + drawH / 2);
+    ctx.scale(-1, 1);
+    ctx.drawImage(
+        roadSpriteSheet,
+        roadSprite.x, roadSprite.y, roadSprite.w, roadSprite.h,
+        -drawW / 2, -drawH / 2, drawW, drawH
+    );
+    // right road top for illusion
+    ctx.drawImage(
+        roadSpriteSheet,
+        roadSprite.x, roadSprite.y, roadSprite.w, roadSprite.h,
+        -drawW / 2, - drawH / 2 - drawH, drawW, drawH
+    )
+    ctx.restore();
 }
