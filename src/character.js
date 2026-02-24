@@ -1,3 +1,4 @@
+import { drawCar, spawnCar, updateCars } from "./car.js";
 import { canvas, ctx } from "./main.js";
 import { drawRoad, drawScene, roadSprite, updateRoad, updateScene } from "./scene.js";
 
@@ -21,7 +22,7 @@ export const keys = {
 }
 
 export function initPlayer() {
-    player.x = canvas.width / window.devicePixelRatio / 2 - roadSprite.w * 0.7 + playerSprite.w * 2 + 30;
+    player.x = canvas.width / window.devicePixelRatio / 2 - roadSprite.w * 0.7 + playerSprite.w * 2;
     player.y = canvas.height / window.devicePixelRatio - playerSprite.h * 2 - 40;
 }
 
@@ -85,8 +86,12 @@ export function updatePlayer(delta) {
     let roadXRight = canvas.width / window.devicePixelRatio / 2 + roadSprite.w * 0.7;
 
     if (player.x <= roadXLeft + playerSprite.w * 2) player.x = roadXLeft + playerSprite.w * 2;
-    if (player.x >= roadXRight - playerSprite.w * 2 - 80) player.x = roadXRight - playerSprite.w * 2 - 80;
+    if (player.x >= roadXRight - playerSprite.w * 2) player.x = roadXRight - playerSprite.w * 2;
+    console.log("logicalW", canvas.width / window.devicePixelRatio);
 
+    console.log("roadXLeft", roadXLeft);
+    console.log("roadXRight", roadXRight);
+    console.log("drawW", roadSprite.w * 0.7);
 };
 
 export function drawPlayer() {
@@ -100,6 +105,8 @@ export function drawPlayer() {
         -playerSprite.w / 2, -playerSprite.h / 2, playerSprite.w * 2, playerSprite.h * 2
     );
     ctx.restore();
+    ctx.strokeStyle = 'blue';
+    ctx.strokeRect(player.x, player.y, playerSprite.w * 2, playerSprite.h * 2);
 }
 
 export function gameLoop(currentTime) {
@@ -108,11 +115,20 @@ export function gameLoop(currentTime) {
     if (delta > 0.1) delta = 0.1;
 
     lastTime = currentTime;
+
+    spawnCar(delta);
+    updateCars();
+    drawCar();
+
     updateScene();
+
     updatePlayer(delta);
+
     updateRoad(delta);
     drawRoad();
+
     drawScene();
+    
     drawPlayer();
 
     requestAnimationFrame(gameLoop);
