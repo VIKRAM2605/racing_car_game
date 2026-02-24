@@ -22,7 +22,7 @@ export const keys = {
 
 export function initPlayer() {
     player.x = canvas.width / window.devicePixelRatio / 2 - roadSprite.w * 0.7 + playerSprite.w * 2 + 30;
-    player.y = canvas.height / window.devicePixelRatio - playerSprite.h;
+    player.y = canvas.height / window.devicePixelRatio - playerSprite.h * 2 - 40;
 }
 
 export const playerSprite = { x: 297, y: 347, w: 39, h: 83 };
@@ -75,10 +75,17 @@ export function updatePlayer(delta) {
     let pseudoY = player.y + (moveY * player.speed);
 
     player.x = pseudoX;
-    player.y = pseudoY;
+    //player.y = pseudoY;
 
-    if (player.y < 0) player.y = 0;
-    if (player.y > canvas.height - playerSprite.w) player.y = canvas.height - playerSprite.w;
+    // if (player.y < 0) player.y = 0;
+    // if (player.y > canvas.height - playerSprite.w) player.y = canvas.height - playerSprite.w;
+
+    // if first road is roadX then the second road is roadX + road width + road width - offset to check whether the car is hitting it or not
+    let roadXLeft = canvas.width / window.devicePixelRatio / 2 - roadSprite.w * 0.7;
+    let roadXRight = canvas.width / window.devicePixelRatio / 2 + roadSprite.w * 0.7;
+
+    if (player.x <= roadXLeft + playerSprite.w * 2) player.x = roadXLeft + playerSprite.w * 2;
+    if (player.x >= roadXRight - playerSprite.w * 2 - 80) player.x = roadXRight - playerSprite.w * 2 - 80;
 
 };
 
