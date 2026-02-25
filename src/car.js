@@ -66,7 +66,7 @@ export function spawnCar(delta) {
             id: `${Date.now()}`,
             sprite: carSprite,
             x: carLane,
-            y: 0,
+            y: -500,
             facing: facing,
         });
         console.log(cars);

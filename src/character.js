@@ -37,7 +37,7 @@ export function initPlayer() {
 export const playerSprite = { x: 297, y: 347, w: 39, h: 83 };
 
 let lastTime = 0;
-let angle = 0;
+export let angle = 0;
 
 export function updatePlayer(delta) {
     // this function like this constant pace for the player movement acceleration 
@@ -112,9 +112,9 @@ export function drawPlayer() {
         playerSprite.x, playerSprite.y, playerSprite.w, playerSprite.h,
         -playerSprite.w / 2, -playerSprite.h / 2, playerSprite.w * 2, playerSprite.h * 2
     );
-    ctx.restore();
     ctx.strokeStyle = 'blue';
-    ctx.strokeRect(player.x, player.y, playerSprite.w * 2, playerSprite.h * 2);
+    ctx.strokeRect(-(playerSprite.w - 4) / 2, -(playerSprite.h - (8 * 2)) / 2, playerSprite.w * 2 - 4, playerSprite.h * 2 - 8 * 2);
+    ctx.restore();
 }
 
 export function gameLoop(currentTime) {
@@ -138,7 +138,7 @@ export function gameLoop(currentTime) {
     drawPlayer();
 
     const check = collisionCheck();
-    if(check){
+    if (check) {
         console.log("hit");
     }
 
