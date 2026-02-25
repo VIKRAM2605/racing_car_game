@@ -1,3 +1,4 @@
+import { initCars } from "./car.js";
 import { drawPlayer, gameLoop, initPlayer, keys, playerSpriteSheet } from "./character.js";
 
 export const roadSpriteSheet = new Image();
@@ -26,6 +27,7 @@ window.addEventListener("resize", () => {
 })
 resizeCanvas();
 initPlayer();
+initCars();
 
 let loadedCount = 0;
 const imageCount = 2;
@@ -38,7 +40,6 @@ function onImageLoad() {
 }
 
 document.addEventListener('keydown', (e) => {
-    console.log(e.key);
     switch (e.key.toLowerCase()) {
         case 'w':
         case 'arrowup': keys.up = true; return;

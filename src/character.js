@@ -1,4 +1,5 @@
 import { drawCar, spawnCar, updateCars } from "./car.js";
+import { collisionCheck } from "./collision.js";
 import { canvas, ctx } from "./main.js";
 import { drawRoad, drawScene, roadSprite, updateRoad, updateScene } from "./scene.js";
 
@@ -21,9 +22,16 @@ export const keys = {
     down: false,
 }
 
+export const pseudoPos = {
+    x: 0,
+    y: 0,
+}
+
 export function initPlayer() {
     player.x = canvas.width / window.devicePixelRatio / 2 - roadSprite.w * 0.7 + playerSprite.w * 2;
     player.y = canvas.height / window.devicePixelRatio - playerSprite.h * 2 - 40;
+    pseudoPos.x = canvas.width / window.devicePixelRatio / 2 - roadSprite.w * 0.7 + playerSprite.w * 2;
+    pseudoPos.y = canvas.height / window.devicePixelRatio - playerSprite.h * 2 - 40;
 }
 
 export const playerSprite = { x: 297, y: 347, w: 39, h: 83 };
@@ -46,6 +54,10 @@ export function updatePlayer(delta) {
         player.speed += 0.5 * delta;
         if (player.speed > player.maxSpeed) player.speed = player.maxSpeed
     } else {
+        player.speed -= 0.5 * delta;
+        if (player.speed < 0.5) player.speed = 0.5;
+    }
+    if (keys.down) {
         player.speed -= 0.5 * delta;
         if (player.speed < 0.5) player.speed = 0.5;
     }
@@ -78,20 +90,16 @@ export function updatePlayer(delta) {
     player.x = pseudoX;
     //player.y = pseudoY;
 
-    // if (player.y < 0) player.y = 0;
+    // if (player.y < 0) player.y = 0
     // if (player.y > canvas.height - playerSprite.w) player.y = canvas.height - playerSprite.w;
 
     // if first road is roadX then the second road is roadX + road width + road width - offset to check whether the car is hitting it or not
+
     let roadXLeft = canvas.width / window.devicePixelRatio / 2 - roadSprite.w * 0.7;
     let roadXRight = canvas.width / window.devicePixelRatio / 2 + roadSprite.w * 0.7;
 
     if (player.x <= roadXLeft + playerSprite.w * 2) player.x = roadXLeft + playerSprite.w * 2;
-    if (player.x >= roadXRight - playerSprite.w * 2) player.x = roadXRight - playerSprite.w * 2;
-    console.log("logicalW", canvas.width / window.devicePixelRatio);
-
-    console.log("roadXLeft", roadXLeft);
-    console.log("roadXRight", roadXRight);
-    console.log("drawW", roadSprite.w * 0.7);
+    if (player.x >= roadXRight - playerSprite.w * 4) player.x = roadXRight - playerSprite.w * 4;
 };
 
 export function drawPlayer() {
@@ -116,20 +124,23 @@ export function gameLoop(currentTime) {
 
     lastTime = currentTime;
 
-    spawnCar(delta);
-    updateCars();
-    drawCar();
-
-    updateScene();
-
-    updatePlayer(delta);
-
-    updateRoad(delta);
     drawRoad();
 
+    spawnCar(delta);
+
+    updateCars(delta);
+    updateScene();
+    updatePlayer(delta);
+    updateRoad(delta);
+
     drawScene();
-    
+    drawCar();
     drawPlayer();
+
+    const check = collisionCheck();
+    if(check){
+        console.log("hit");
+    }
 
     requestAnimationFrame(gameLoop);
 }
