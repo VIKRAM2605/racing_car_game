@@ -1,6 +1,8 @@
 import { drawCar, spawnCar, updateCars } from "./car.js";
 import { collisionCheck } from "./collision.js";
-import { canvas, ctx } from "./main.js";
+import { setGameOver } from "./gameover.js";
+import { canvas, ctx, isGameRunning } from "./main.js";
+import { drawPausePage, isPause } from "./pause.js";
 import { drawRoad, drawScene, roadSprite, updateRoad, updateScene } from "./scene.js";
 
 export const playerSpriteSheet = new Image();
@@ -13,31 +15,32 @@ export const player = {
     isDead: false,
     nitro: 0,
     maxSpeed: 3,
-}
+};
 
 export const keys = {
     up: false,
     left: false,
     right: false,
     down: false,
-}
+};
 
 export const pseudoPos = {
     x: 0,
     y: 0,
-}
+};
 
 export function initPlayer() {
-    player.x = canvas.width / window.devicePixelRatio / 2 - roadSprite.w * 0.7 + playerSprite.w * 2;
+    player.x = canvas.width / window.devicePixelRatio / 2 - roadSprite.w * 0.7 + playerSprite.w * 2 + roadSprite.w * 0.7 / 2;
     player.y = canvas.height / window.devicePixelRatio - playerSprite.h * 2 - 40;
     pseudoPos.x = canvas.width / window.devicePixelRatio / 2 - roadSprite.w * 0.7 + playerSprite.w * 2;
     pseudoPos.y = canvas.height / window.devicePixelRatio - playerSprite.h * 2 - 40;
-}
+};
 
 export const playerSprite = { x: 297, y: 347, w: 39, h: 83 };
 
 let lastTime = 0;
 export let angle = 0;
+let animationId = null;
 
 export function updatePlayer(delta) {
     // this function like this constant pace for the player movement acceleration 
@@ -50,7 +53,7 @@ export function updatePlayer(delta) {
     const returnRate = 25 * delta;
     const maxAngle = 25;
 
-    if (keys.up) {
+    if (keys.up && isGameRunning === true) {
         player.speed += 0.5 * delta;
         if (player.speed > player.maxSpeed) player.speed = player.maxSpeed
     } else {
@@ -62,14 +65,14 @@ export function updatePlayer(delta) {
         if (player.speed < 0.5) player.speed = 0.5;
     }
 
-    if (keys.left) {
+    if (keys.left && isGameRunning === true) {
         angle -= turnRate;
         if (angle < -maxAngle) angle = -maxAngle;
     }
-    else if (keys.right) {
+    else if (keys.right && isGameRunning === true) {
         angle += turnRate;
         if (angle > maxAngle) angle = maxAngle;
-    } else {
+    } else if (isGameRunning === true) {
         if (angle > 0) {
             angle -= returnRate;
             if (angle < 0) angle = 0
@@ -115,10 +118,14 @@ export function drawPlayer() {
     ctx.strokeStyle = 'blue';
     ctx.strokeRect(-(playerSprite.w - 4) / 2, -(playerSprite.h - (8 * 2)) / 2, playerSprite.w * 2 - 4, playerSprite.h * 2 - 8 * 2);
     ctx.restore();
-}
+};
 
 export function gameLoop(currentTime) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    if (isPause) {
+        drawPausePage();
+        animationId = requestAnimationFrame(gameLoop);
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     let delta = (currentTime - lastTime) / 1000;
     if (delta > 0.1) delta = 0.1;
 
@@ -139,8 +146,15 @@ export function gameLoop(currentTime) {
 
     const check = collisionCheck();
     if (check) {
-        console.log("hit");
+        stopGameLoop();
+        setGameOver();
+        return;
     }
 
-    requestAnimationFrame(gameLoop);
-}
+    animationId = requestAnimationFrame(gameLoop);
+};
+
+export function stopGameLoop() {
+    cancelAnimationFrame(animationId);
+    animationId = null;
+};

@@ -32,7 +32,7 @@ export function initCars() {
     const lane1 = roadXLeft + playerSprite.w * 2 + playerSprite.w;
     const lane2 = roadXLeft + playerSprite.w * 2 + roadSprite.w * 0.7 / 2;
     const lane3 = roadXRight - playerSprite.w * 4 - playerSprite.w + 5;
-    const lane4 = roadXRight - playerSprite.w * 4 + 5 - roadSprite.w * 0.7 /2;
+    const lane4 = roadXRight - playerSprite.w * 4 + 5 - roadSprite.w * 0.7 / 2;
 
     carLanePosition = [
         lane1,
@@ -41,18 +41,20 @@ export function initCars() {
         lane4,
     ];
 
-    console.log(carLanePosition);
-}
+};
 
 //need to add car path finding if it encounter obstacle;
-export function spawnCar(delta) {
+export function spawnCar(delta, laneAvoid = []) {
     timePassed += delta;
     if (timePassed > nextSpawn) {
         lastSpawn = timePassed;
         timePassed = 0;
-        let carLane = carLanePosition[randomInt(0, carLanePosition.length - 1)];
+
+        let newLanes = carLanePosition.filter(item => !laneAvoid.includes(item));
+
+        let carLane = newLanes[randomInt(0, newLanes.length - 1)];
+
         let carSprite, facing;
-        //console.log(carLane, carLanePosition[3], carLanePosition[2]);
         if (carLane === carLanePosition[3] || carLane === carLanePosition[2]) {
             const keys = Object.keys(carSpritesDown);
             carSprite = keys[randomInt(0, keys.length - 1)];
@@ -72,6 +74,7 @@ export function spawnCar(delta) {
         console.log(cars);
     }
 };
+
 
 export function updateCars(delta) {
     for (let i = 0; i < cars.length; i++) {

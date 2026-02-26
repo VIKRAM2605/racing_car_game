@@ -10,7 +10,7 @@ export const sceneSprites = {
     booth: { x: 368, y: 610, w: 31, h: 71, sw: 31, sh: 71 },
     mailPost: { x: 407, y: 637, w: 24, h: 41, sw: 24, sh: 41 },
     fireHydrant: { x: 443, y: 637, w: 24, h: 39, sw: 24, sh: 39 },
-}
+};
 
 export const roadSprite = { x: 0, y: 0, w: 540, h: 960 };
 
@@ -24,17 +24,17 @@ export function drawScene() {
         sceneSprites.barricade.x, sceneSprites.barricade.y, sceneSprites.barricade.w, sceneSprites.barricade.h,
         10, 20, sceneSprites.barricade.sw, sceneSprites.barricade.sh
     );
-}
+};
 
 export function updateScene(delta) {
 
-}
+};
 
 export function updateRoad(delta) {
     startY += player.speed * delta * 750;
     startY = Math.floor(startY % (roadSprite.h * 0.9));
     if (startY >= roadSprite.h * 0.9) startY = 0;
-}
+};
 
 export function drawRoad() {
     ctx.imageSmoothingEnabled = false;
@@ -77,4 +77,4 @@ export function drawRoad() {
     );
     //ctx.strokeRect(-drawW / 2 + playerSprite.w * 2, - drawH / 2 - drawH - 1, drawW, drawH + 2);
     ctx.restore();
-}
+};
