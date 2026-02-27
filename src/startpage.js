@@ -1,6 +1,6 @@
 import { carLanePosition, drawCar, spawnCar, updateCars } from "./car.js";
 import { drawPlayer, updatePlayer } from "./character.js";
-import { drawRoad, updateRoad } from "./scene.js";
+import { drawRoad, drawScene, spawnScene, spawnStreetLight, updateRoad, updateScene } from "./scene.js";
 
 let animationId = null;
 let lastTime = 0;
@@ -18,10 +18,14 @@ export function startPageLoop(currentTime) {
     updateRoad(delta);
     updatePlayer(delta);
     updateCars(delta);
+    updateScene(delta);
 
     spawnCar(delta, [carLanePosition[1]]);
+    spawnScene(delta);
+    spawnStreetLight();
 
     drawRoad();
+    drawScene();
     drawCar();
     drawPlayer();
 

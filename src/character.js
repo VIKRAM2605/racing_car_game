@@ -3,7 +3,7 @@ import { collisionCheck } from "./collision.js";
 import { setGameOver } from "./gameover.js";
 import { canvas, ctx, isGameRunning } from "./main.js";
 import { drawPausePage, isPause } from "./pause.js";
-import { drawRoad, drawScene, roadSprite, updateRoad, updateScene } from "./scene.js";
+import { drawRoad, drawScene, roadSprite, spawnScene, updateRoad, updateScene } from "./scene.js";
 
 export const playerSpriteSheet = new Image();
 playerSpriteSheet.src = "assets/bk_cars1.a.png";
@@ -61,7 +61,7 @@ export function updatePlayer(delta) {
         if (player.speed < 0.5) player.speed = 0.5;
     }
     if (keys.down) {
-        player.speed -= 0.5 * delta;
+        player.speed -= 1.5 * delta;
         if (player.speed < 0.5) player.speed = 0.5;
     }
 
@@ -134,9 +134,10 @@ export function gameLoop(currentTime) {
     drawRoad();
 
     spawnCar(delta);
+    spawnScene(delta);
 
     updateCars(delta);
-    updateScene();
+    updateScene(delta);
     updatePlayer(delta);
     updateRoad(delta);
 
