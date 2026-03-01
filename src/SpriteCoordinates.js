@@ -81,3 +81,16 @@ export const playerIcons = {
         { x: 73, y: 19, w: 15, h: 13, sw: 15 * scale, sh: 13 * scale }
     ]
 }
+
+export const numbers = {
+    "0": { x: 0, y: 0, w: 8, h: 8, sw: 8 * (scale + 1), sh: 8 * (scale + 1) },
+    "1": { x: 9, y: 0, w: 5, h: 8, sw: 5 * (scale + 1), sh: 8 * (scale + 1) },
+    "2": { x: 17, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
+    "3": { x: 25, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
+    "4": { x: 33, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
+    "5": { x: 41, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
+    "6": { x: 49, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
+    "7": { x: 57, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
+    "8": { x: 65, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
+    "9": { x: 73, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) }
+} 

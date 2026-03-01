@@ -17,6 +17,7 @@ export const player = {
     minSpeed: 50,
     idleSpeed: 100,
     currentFacing: 'up',
+    fuel:100,
 };
 
 export const pseudoPos = {
@@ -63,7 +64,7 @@ export function updatePlayer(delta) {
         }
     }
     else if (keys.down) {
-        player.speed -= delta * 100;
+        player.speed -= delta * 200;
         if (player.speed < player.minSpeed) player.speed = player.minSpeed;
     }
     else {

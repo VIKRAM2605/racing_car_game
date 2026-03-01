@@ -63,8 +63,6 @@ export function spawnCars(delta) {
             }
         }
 
-        console.log(sprite, lane, y, currentFacing);
-
         cars.push({
             x: lane,
             y: y,
@@ -77,9 +75,9 @@ export function spawnCars(delta) {
 export function updateCars(delta) {
     for (let i = 0; i < cars.length; i++) {
         if (cars[i].facing === "up") {
-            cars[i].y += (player.speed - 150) * delta;
+            cars[i].y += (player.speed - 250) * delta;
         } else {
-            cars[i].y += (player.speed + 150) * delta;
+            cars[i].y += (player.speed + 350) * delta;
         }
     }
 
