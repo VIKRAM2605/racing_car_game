@@ -1,4 +1,8 @@
-export const scale = 3;
+const BASE_WIDTH = 1536;
+const BASE_HEIGHT = 776;
+const BASE_SCALE = 3;
+
+export const scale = Math.max(1, Math.round((window.innerHeight / BASE_HEIGHT) * BASE_SCALE));
 
 //players
 export const player1Sprite = {
@@ -83,14 +87,19 @@ export const playerIcons = {
 }
 
 export const numbers = {
-    "0": { x: 0, y: 0, w: 8, h: 8, sw: 8 * (scale + 1), sh: 8 * (scale + 1) },
-    "1": { x: 9, y: 0, w: 5, h: 8, sw: 5 * (scale + 1), sh: 8 * (scale + 1) },
-    "2": { x: 17, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
-    "3": { x: 25, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
-    "4": { x: 33, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
-    "5": { x: 41, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
-    "6": { x: 49, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
-    "7": { x: 57, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
-    "8": { x: 65, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) },
-    "9": { x: 73, y: 0, w: 7, h: 8, sw: 7 * (scale + 1), sh: 8 * (scale + 1) }
-} 
+    "0": { x: 0, y: 0, w: 8, h: 8, sw: 8 * (scale + 2), sh: 8 * (scale + 2) },
+    "1": { x: 9, y: 0, w: 5, h: 8, sw: 5 * (scale + 2), sh: 8 * (scale + 2) },
+    "2": { x: 17, y: 0, w: 7, h: 8, sw: 7 * (scale + 2), sh: 8 * (scale + 2) },
+    "3": { x: 25, y: 0, w: 7, h: 8, sw: 7 * (scale + 2), sh: 8 * (scale + 2) },
+    "4": { x: 33, y: 0, w: 7, h: 8, sw: 7 * (scale + 2), sh: 8 * (scale + 2) },
+    "5": { x: 41, y: 0, w: 7, h: 8, sw: 7 * (scale + 2), sh: 8 * (scale + 2) },
+    "6": { x: 49, y: 0, w: 7, h: 8, sw: 7 * (scale + 2), sh: 8 * (scale + 2) },
+    "7": { x: 57, y: 0, w: 7, h: 8, sw: 7 * (scale + 2), sh: 8 * (scale + 2) },
+    "8": { x: 65, y: 0, w: 7, h: 8, sw: 7 * (scale + 2), sh: 8 * (scale + 2) },
+    "9": { x: 73, y: 0, w: 7, h: 8, sw: 7 * (scale + 2), sh: 8 * (scale + 2) }
+};
+
+export const damageSprite = {
+    "0": { x: 2, y: 2, w: 4, h: 4, sw: 4 * (scale + 2), sh: 4 * (scale + 2) },
+    "1": { x: 9, y: 1, w: 6, h: 6, sw: 6 * (scale + 2), sh: 6 * (scale + 2) },
+}

@@ -68,7 +68,7 @@ export function initRoadPos() {
             detailsForRight[i][j] = randomDetailsGeneration();
         }
     }
-    
+
 };
 
 export const scene = ["summer", "winter", "desert"];
@@ -103,7 +103,7 @@ export function updateRoad(delta) {
 };
 
 export function updateDetails(delta) {
-    
+
     detailsPosY += delta * (player.speed + 200);
     const detailH = detailsMap[currentScene]["details1"].sh;
     if (detailsPosY >= detailH) {
@@ -136,7 +136,7 @@ export function refillRoads() {
         if (roadsSinceLastBunk > roadsUntilNextBunk) {
             roadsSinceLastBunk = 0;
             roadsUntilNextBunk += bunkSpacingIncrease;
-            bunkSpacingIncrease += 5;
+            bunkSpacingIncrease += 2;
             roads.push("gasStation");
             totalH += summer["gasStation"].stackHeight;
             while (totalH < screenH * 3) {
@@ -218,3 +218,18 @@ export function drawDetails() {
         currentH += detailsMap[currentScene]["details1"].sh - 1;
     }
 };
+
+export function getRoadBelowPlayer() {
+    let currentY = posY;
+    for (let i = 0; i < roads.length; i++) {
+        const road = summer[roads[i]];
+        const visualOffset = road.sh - road.stackHeight; 
+        const roadTop = currentY - road.stackHeight - visualOffset;
+        const roadBottom = currentY;
+        if (player.y >= roadTop && player.y <= roadBottom) {
+            return road;
+        }
+        currentY -= road.stackHeight;
+    }
+    return summer["road"];
+}

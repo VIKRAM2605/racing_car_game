@@ -1,11 +1,17 @@
 import { drawCars, spawnCars, updateCars } from "./car.js";
+import { deductHealth } from "./health.js";
 import { canvas, ctx, keys, playerSpriteSheet1 } from "./main.js";
-import { drawScene, updateDetails, updateRoad } from "./scene.js";
+import { drawScene, getRoadBelowPlayer, posX, roads, updateDetails, updateRoad } from "./scene.js";
 import { player1Sprite, summer } from "./SpriteCoordinates.js";
 import { drawFullUI } from "./ui.js";
 
 export let defaultPlayerSheet;
 export let playerSprite;
+export let fuelDropTime = 1;
+export let fuelCurrentTime = 0;
+
+export let maxOffRoadTime = 3;
+export let currentOffRoadTime = 0;
 
 export const player = {
     x: 0,
@@ -17,7 +23,7 @@ export const player = {
     minSpeed: 50,
     idleSpeed: 100,
     currentFacing: 'up',
-    fuel:100,
+    fuel: 1,
 };
 
 export const pseudoPos = {
@@ -43,6 +49,14 @@ export function updatePlayer(delta) {
     let moveY = 0;
 
     let activeMaxSpeed = keys.shift && player.nitro > 0 ? player.maxSpeed + 75 : player.maxSpeed;
+
+    fuelCurrentTime += delta;
+    if (fuelCurrentTime >= fuelDropTime) {
+        fuelCurrentTime -= fuelDropTime;
+        if (player.speed > player.idleSpeed) player.fuel -= 0.03;
+        else if (player.speed === player.idleSpeed) player.fuel -= 0.02;
+        else player.fuel -= 0.01;
+    }
 
     if (keys.up) {
 
@@ -92,11 +106,20 @@ export function updatePlayer(delta) {
     else {
         player.currentFacing = "up";
     }
+    const road = getRoadBelowPlayer();
+    const roadRight = posX + road.sw;
+
+    if (player.x <= posX || player.x + playerSprite[player.currentFacing].sw >= roadRight) {
+        currentOffRoadTime += delta;
+        if (currentOffRoadTime >= maxOffRoadTime) {
+            currentOffRoadTime -= maxOffRoadTime;
+            deductHealth();
+        }
+    }
 
     let steeringSpeed = 150;
 
     player.x += moveX * steeringSpeed * delta;
-    //player.y -= player.speed * delta;
 };
 
 export function drawPlayer() {
