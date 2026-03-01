@@ -103,3 +103,20 @@ export const damageSprite = {
     "0": { x: 2, y: 2, w: 4, h: 4, sw: 4 * (scale + 2), sh: 4 * (scale + 2) },
     "1": { x: 9, y: 1, w: 6, h: 6, sw: 6 * (scale + 2), sh: 6 * (scale + 2) },
 }
+
+export const roadObstackleSprites = {
+    "arrow": { x: 5, y: 0, w: 6, h: 16, sw: 6 * scale, sh: 6 * scale },
+    "crack": { x: 21, y: 5, w: 7, h: 6, sw: 7 * scale, sh: 6 * scale },
+    "oilSpill": { x: 37, y: 5, w: 6, h: 6, sw: 6 * scale, sh: 6 * scale },
+    "potHole": { x: 52, y: 4, w: 8, h: 8, sw: 8 * scale, sh: 8 * scale },
+    "cone": { x: 69, y: 5, w: 6, h: 7, sw: 6 * scale, sh: 7 * scale },
+    "barricade": { x: 83, y: 6, w: 10, h: 6, sw: 10 * scale, sh: 6 * scale },
+    "waterSpill": { x: 100, y: 5, w: 8, h: 8, sw: 8 * scale, sh: 8 * scale },
+};
+
+export const stationMarking = {
+    "arrowRight": { x: 7, y: 4, w: 6, h: 9, sw: 6 * scale, sh: 9 * scale },
+    "pump": { x: 21, y: 3, w: 9, h: 10, sw: 9 * scale, sh: 10 * scale },
+    "60": { x: 33, y: 1, w: 14, h: 14, sw: 14 * scale, sh: 14 * scale },
+    "30": { x: 49, y: 1, w: 14, h: 14, sw: 14 * scale, sh: 14 * scale }
+}

@@ -1,7 +1,7 @@
 import { drawCars, spawnCars, updateCars } from "./car.js";
 import { deductHealth } from "./health.js";
 import { canvas, ctx, keys, playerSpriteSheet1 } from "./main.js";
-import { drawScene, getRoadBelowPlayer, posX, roads, updateDetails, updateRoad } from "./scene.js";
+import { drawObstacles, drawScene, getRoadBelowPlayer, posX, roads, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
 import { player1Sprite, summer } from "./SpriteCoordinates.js";
 import { drawFullUI } from "./ui.js";
 
@@ -38,6 +38,12 @@ export function initPlayer() {
     player.x = canvas.width / window.devicePixelRatio / 2 - (summer["road"].sw) / 2 + player1Sprite["up"].sw + 22;
     player.y = canvas.height / window.devicePixelRatio / 2 + 100;
 };
+
+export function resetPlayer() {
+    player.speed = 100;
+    player.isDead = false;
+    player.fuel = 1;
+}
 
 let lastTime = 0;
 export let angle = 0;
@@ -115,6 +121,8 @@ export function updatePlayer(delta) {
             currentOffRoadTime -= maxOffRoadTime;
             deductHealth();
         }
+    } else {
+        currentOffRoadTime = 0;
     }
 
     let steeringSpeed = 150;
@@ -141,14 +149,17 @@ export function gameLoop(currentTime) {
     lastTime = currentTime;
 
     spawnCars(delta);
+    spawnObstacles(delta);
 
     updatePlayer(delta);
     updateRoad(delta);
     updateCars(delta);
     updateDetails(delta);
+    updateObstacles(delta);
 
     drawScene();
     drawFullUI(delta);
+    drawObstacles();
     drawPlayer();
     drawCars();
 
@@ -158,4 +169,5 @@ export function gameLoop(currentTime) {
 export function stopGameLoop() {
     cancelAnimationFrame(animationId);
     animationId = null;
+    lastTime = 0;
 };

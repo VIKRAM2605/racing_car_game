@@ -23,6 +23,10 @@ export function initLanes() {
     lanes[1] = lane2;
 }
 
+export function resetCars(){
+    cars = [];
+}
+
 export function spawnCars(delta) {
     currentSpawn += delta;
     if (currentSpawn > spawnDelay) {

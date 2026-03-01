@@ -66,8 +66,13 @@ export const lemonSpriteSheet = new Image();
 lemonSpriteSheet.src = "assets/Player_icons/Lemon.png";
 
 export const slimeSpriteSheet = new Image();
-slimeSpriteSheet.src = "assets/Player_icons/slime.png"
+slimeSpriteSheet.src = "assets/Player_icons/slime.png";
 
+export const obstaclesSpriteSheet = new Image();
+obstaclesSpriteSheet.src = "assets/Props/Misc_props.png";
+
+export const stationMarkingSpriteSheet = new Image();
+stationMarkingSpriteSheet.src = "assets/Props/Road_markings.png"
 export const keys = {
     up: false,
     right: false,
@@ -97,7 +102,7 @@ window.addEventListener("resize", () => {
 });
 
 let loadedCount = 0;
-const imageCount = 20;
+const imageCount = 22;
 
 function onImageLoad() {
     loadedCount++;
@@ -165,3 +170,5 @@ carrotSpriteSheet.onload = onImageLoad;
 lemonSpriteSheet.onload = onImageLoad;
 slimeSpriteSheet.onload = onImageLoad;
 cherrySpriteSheet.onload = onImageLoad;
+obstaclesSpriteSheet.onload = onImageLoad;
+stationMarkingSpriteSheet.onload = onImageLoad;
