@@ -1,6 +1,7 @@
 import { initLanes } from "./car.js";
 import { gameLoop, initPlayer } from "./character.js";
 import { initRoadPos, initSheet } from "./scene.js";
+import { initPlayerIconSheet } from "./ui.js";
 
 export const canvas = document.getElementById("game-canvas");
 export const ctx = canvas.getContext("2d");
@@ -40,6 +41,33 @@ summerDetails4SpriteSheet.src = "assets/Levels/Summer_details4.png";
 export const npcSpriteSheet = new Image();
 npcSpriteSheet.src = "assets/Cars/NPC_cars.png";
 
+export const fullSpriteSheet = new Image();
+fullSpriteSheet.src = "assets/UI/Main_UI.png";
+
+export const damageSpriteSheet = new Image();
+damageSpriteSheet.src = "assets/UI/Damage_indicator.png";
+
+export const fuelBarSpriteSheet = new Image();
+fuelBarSpriteSheet.src = "assets/UI/Fuel_bar.png";
+
+export const playerIndicatorSpriteSheet = new Image();
+playerIndicatorSpriteSheet.src = "assets/UI/Player_arrow_indicator.png";
+
+export const numbersSpriteSheet = new Image();
+numbersSpriteSheet.src = "assets/UI/Speed_indicator_numbers.png";
+
+export const carrotSpriteSheet = new Image();
+carrotSpriteSheet.src = "assets/Player_icons/Carrot.png";
+
+export const cherrySpriteSheet = new Image();
+cherrySpriteSheet.src = "assets/Player_icons/Cherry.png";
+
+export const lemonSpriteSheet = new Image();
+lemonSpriteSheet.src = "assets/Player_icons/Lemon.png";
+
+export const slimeSpriteSheet = new Image();
+slimeSpriteSheet.src = "assets/Player_icons/slime.png"
+
 export const keys = {
     up: false,
     right: false,
@@ -69,7 +97,7 @@ window.addEventListener("resize", () => {
 });
 
 let loadedCount = 0;
-const imageCount = 11;
+const imageCount = 20;
 
 function onImageLoad() {
     loadedCount++;
@@ -115,6 +143,7 @@ initPlayer();
 initSheet();
 initRoadPos();
 initLanes();
+initPlayerIconSheet();
 
 playerSpriteSheet1.onload = onImageLoad;
 playerSpriteSheet2.onload = onImageLoad;
@@ -127,3 +156,12 @@ summerDetails4SpriteSheet.onload = onImageLoad;
 summerRoadSpriteSheet.onload = onImageLoad;
 summerGasStationSpriteSheet.onload = onImageLoad;
 npcSpriteSheet.onload = onImageLoad;
+damageSpriteSheet.onload = onImageLoad;
+fuelBarSpriteSheet.onload = onImageLoad;
+fullSpriteSheet.onload = onImageLoad;
+playerIndicatorSpriteSheet.onload = onImageLoad;
+numbersSpriteSheet.onload = onImageLoad;
+carrotSpriteSheet.onload = onImageLoad;
+lemonSpriteSheet.onload = onImageLoad;
+slimeSpriteSheet.onload = onImageLoad;
+cherrySpriteSheet.onload = onImageLoad;

@@ -50,3 +50,34 @@ export const summerDetails = {
     details5: { x: 0, y: 0, w: 64, h: 16, sw: 64 * scale, sh: 16 * scale },
 }
 
+export const ui = {
+    full: { x: 0, y: 0, w: 32, h: 176, sw: 32 * (scale + 2), sh: 176 * scale },
+    damageYes: { x: 0, y: 0, w: 8, h: 8, sw: 8 * scale, sh: 8 * scale },
+    damageNo: { x: 8, y: 0, w: 8, h: 8, sw: 8 * scale, sh: 8 * scale },
+    fuelBar: { x: 6, y: 4, w: 4, h: 48, sw: 4 * scale, sh: 48 * scale },
+    playerIndicator: { x: 0, y: -1, w: 8, h: 9, sw: 8 * scale, sh: 9 * scale },
+    numbers: { x: 0, y: 0, w: 80, h: 8, sw: 80 * scale, sh: 8 * scale },
+}
+
+export const playerIcons = {
+    carrot: [
+        { x: 10, y: 14, w: 12, h: 18, sw: 12 * scale, sh: 18 * scale },
+        { x: 42, h: 13, w: 12, h: 18, sw: 12 * scale, sh: 18 * scale },
+        { x: 74, h: 13, w: 12, h: 19, sw: 12 * scale, sh: 19 * scale }
+    ],
+    slime: [
+        { x: 9, y: 20, w: 14, h: 12, sw: 14 * scale, h: 12 * scale },
+        { x: 40, y: 21, w: 16, h: 11, sw: 16 * scale, sh: 11 * scale },
+        { x: 73, y: 19, w: 13, h: 13, sw: 13 * scale, sh: 13 * scale }
+    ],
+    lemon: [
+        { x: 9, y: 19, w: 14, h: 13, sw: 14 * scale, sh: 13 * scale },
+        { x: 41, y: 18, w: 14, h: 14, sw: 14 * scale, sh: 14 * scale },
+        { x: 73, y: 18, w: 14, h: 14, sw: 14 * scale, sh: 14 * scale }
+    ],
+    cherry: [
+        { x: 10, y: 15, w: 14, h: 16, sw: 14 * scale, sh: 16 * scale },
+        { x: 41, h: 18, w: 15, h: 14, sw: 15 * scale, sh: 14 * scale },
+        { x: 73, y: 19, w: 15, h: 13, sw: 15 * scale, sh: 13 * scale }
+    ]
+}

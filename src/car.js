@@ -77,7 +77,7 @@ export function spawnCars(delta) {
 export function updateCars(delta) {
     for (let i = 0; i < cars.length; i++) {
         if (cars[i].facing === "up") {
-            cars[i].y += (player.speed - 40) * delta;
+            cars[i].y += (player.speed - 150) * delta;
         } else {
             cars[i].y += (player.speed + 150) * delta;
         }
