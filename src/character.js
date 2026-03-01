@@ -1,6 +1,6 @@
 import { drawCars, spawnCars, updateCars } from "./car.js";
 import { canvas, ctx, keys, playerSpriteSheet1 } from "./main.js";
-import { drawScene, updateRoad } from "./scene.js";
+import { drawScene, updateDetails, updateRoad } from "./scene.js";
 import { player1Sprite, summer } from "./SpriteCoordinates.js";
 
 export let defaultPlayerSheet;
@@ -120,6 +120,7 @@ export function gameLoop(currentTime) {
     updatePlayer(delta);
     updateRoad(delta);
     updateCars(delta);
+    updateDetails(delta);
 
     drawScene();
     drawPlayer();

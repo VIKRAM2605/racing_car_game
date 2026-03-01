@@ -2,12 +2,8 @@ import { player } from "./character.js";
 import { canvas, ctx, npcSpriteSheet, randomInt } from "./main.js";
 import { npc1Sprite, npc2Sprite, npc3Sprite, npc4Sprite, summer } from "./SpriteCoordinates.js";
 
-let lastSpawn = 0;
-let nextSpawn = 4;
-let timePassed = 0;
-
 let cars = [];
-let spawnDelay = 5;
+let spawnDelay = 2;
 let currentSpawn = 0;
 let lanes = [0, 0];
 
