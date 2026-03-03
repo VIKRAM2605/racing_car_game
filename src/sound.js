@@ -1,1 +1,1 @@
-// need to add retro sound effects that just match with the retro vibe;
+// need to add retro sound effects that just match with the retro vibe

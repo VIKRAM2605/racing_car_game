@@ -1,4 +1,5 @@
 import { drawCars, spawnCars, updateCars } from "./car.js";
+import { drawPlayerBox } from "./collision.js";
 import { deductHealth } from "./health.js";
 import { canvas, ctx, keys, playerSpriteSheet1 } from "./main.js";
 import { drawObstacles, drawScene, getRoadBelowPlayer, posX, roads, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
@@ -162,6 +163,8 @@ export function gameLoop(currentTime) {
     drawObstacles();
     drawPlayer();
     drawCars();
+
+    drawPlayerBox(); // debugging for now will remove in future or i will make it enable through key press;
 
     animationId = requestAnimationFrame(gameLoop);
 };

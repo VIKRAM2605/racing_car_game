@@ -1,6 +1,7 @@
 import { initLanes } from "./car.js";
 import { gameLoop, initPlayer } from "./character.js";
 import { initRoadPos, initSheet } from "./scene.js";
+import { startPage, startPageLoop } from "./startpage.js";
 import { initPlayerIconSheet } from "./ui.js";
 
 export const canvas = document.getElementById("game-canvas");
@@ -91,6 +92,8 @@ function resizeCanvas() {
     canvas.height = window.innerHeight * dpr;
 
     ctx.scale(dpr, dpr);
+
+    ctx.imageSmoothingEnabled = false;
 };
 
 export function randomInt(min, max) {
@@ -108,7 +111,9 @@ function onImageLoad() {
     loadedCount++;
     if (loadedCount === imageCount) {
         console.log("success");
-        requestAnimationFrame(gameLoop);
+        //requestAnimationFrame(gameLoop);
+        //startPage();
+        requestAnimationFrame(startPageLoop)
     }
 };
 
