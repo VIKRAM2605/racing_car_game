@@ -3,7 +3,7 @@ import { canvas, ctx, obstaclesSpriteSheet, randomInt, stationMarkingSpriteSheet
 import { roadObstackleSprites, scale, stationMarking, summer, summerDetails } from "./SpriteCoordinates.js";
 
 let currentScene = "summer";
-let nextSceneSpawnTime = 100;
+let nextSceneSpawnTime = 5;
 let currentTime = 0;
 
 let roadsSinceLastBunk = 2;
@@ -79,7 +79,7 @@ export function resetScene() {
     roadMarkings = [];
 }
 
-export const scene = ["summer", "winter", "desert"];
+export const scene = ["summer"];
 export let roads = [];
 export const detailsForLeft = [];
 export const detailsForRight = [];
@@ -93,12 +93,24 @@ export function randomSceneGeneration(delta) {
     currentTime += delta
     if (currentTime > nextSceneSpawnTime) {
         currentTime = 0;
+        currentScene = scene[randomInt(0, scene.length - 1)];
     }
 };
 
+export function addScene(key) {
+    scene.push(key);
+};
+
+export function removeScene(key) {
+    const isThere = scene.indexOf(key);
+    if (isThere !== -1) {
+        scene.splice(isThere, 1);
+    }
+}
+
 export function randomDetailsGeneration() {
     return "details" + randomInt(1, 5).toString();
-}
+};
 
 export function updateRoad(delta) {
     posY += delta * (player.speed + 200);
