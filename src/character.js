@@ -1,5 +1,5 @@
 import { drawCars, spawnCars, updateCars } from "./car.js";
-import { checkCollision } from "./collision.js";
+import { checkCollision, currentInvinsibleTime, isInvinsible } from "./collision.js";
 import { deductHealth } from "./health.js";
 import { canvas, ctx, isDead, keys, playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4, resetAll, resetIsDead, resetIsGameRunning, setIsDead } from "./main.js";
 import { drawObstacles, drawScene, getRoadBelowPlayer, posX, randomSceneGeneration, roads, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
@@ -147,6 +147,11 @@ export function updatePlayer(delta) {
 };
 
 export function drawPlayer() {
+    if (isInvinsible) {
+        const blinkInterval = 0.1;
+        const shouldHide = Math.floor(currentInvinsibleTime / blinkInterval) % 2 === 0;
+        if (shouldHide) return;
+    }
     ctx.imageSmoothingEnabled = false;
     const pos = playerSprite[player.currentFacing];
     ctx.drawImage(
@@ -197,7 +202,7 @@ export function gameLoop(currentTime) {
         drawPlayer();
     }
 
-    const check = checkCollision();// Need to add a cooldown period so player only lose one heart per collision and have a invinsible period
+    const check = checkCollision(delta);// Need to add a cooldown period so player only lose one heart per collision and have a invinsible period
     if (check && !isDead) {
         console.log("colliding");
         deductHealth();

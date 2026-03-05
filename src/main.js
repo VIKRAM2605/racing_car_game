@@ -181,6 +181,7 @@ export function resetAll() {
     resetPlayer();
     resetHealth();
     resetScene();
+    initRoadPos();
 };
 
 document.addEventListener("keydown", (e) => {

@@ -9,6 +9,10 @@ const directionalAngles = {
     upLeft: -3 * Math.PI / 4,
 };
 
+export const invinsibleTime = 3;
+export let currentInvinsibleTime = 0;
+export let isInvinsible = false;
+
 export function getCarCorners(player, paddingX = 4, paddingY = 4) {
     const angle = directionalAngles[player.currentFacing] ?? 0;
     const cos = Math.cos(angle);
@@ -59,19 +63,32 @@ export function isColliding(car) {
 
 
 // need to add colliosn for npc cars and obstacles here use your brain bud for polygon interaction
-export function checkCollision() {
+export function checkCollision(delta) {
+    if (isInvinsible) {
+        currentInvinsibleTime += delta;
+        if (currentInvinsibleTime > invinsibleTime) {
+            currentInvinsibleTime = 0;
+            isInvinsible = false;
+        }
+        return false;
+    }
     let check = checkNPCCarCollision();
     if (check) {
+        isInvinsible = true;
         return true;
     }
     check = checkObstacleCollision();
     if (check) {
+        isInvinsible = true;
         return true;
     }
     check = checkGasStationObstacleCollsion();
     if (check) {
+        isInvinsible = true;
         return true;
     }
+
+    return false;
 
 };
 
