@@ -1,5 +1,6 @@
 import { player } from "./character.js";
 import { canvas, ctx, obstaclesSpriteSheet, randomInt, stationMarkingSpriteSheet, summerDetails1SpriteSheet, summerDetails2SpriteSheet, summerDetails3SpriteSheet, summerDetails4SpriteSheet, summerDetailsSpriteSheet, summerGasStationSpriteSheet, summerRoadSpriteSheet } from "./main.js";
+import { playRefillSound } from "./sound.js";
 import { roadObstackleSprites, scale, stationMarking, summer, summerDetails } from "./SpriteCoordinates.js";
 
 let currentScene = "summer";
@@ -100,7 +101,8 @@ export function initRoadPos() {
         y: null,
         sprite: stationMarking["30"],
         key: "30"
-    }
+    };
+    spawnGasStationObstacles();
 };
 
 export function resetScene() {
@@ -213,7 +215,7 @@ export function refillRoads() {
                 bunkSpacingIncrease += 2;
             }
             roads.push("gasStation");
-            spawnGasStationObstacles();
+            //spawnGasStationObstacles();
             totalH += summer["gasStation"].stackHeight;
             while (totalH < screenH * 3) {
                 roads.push("road");
@@ -482,6 +484,7 @@ export function isPlayerOnTopOfRefillBox() {
             player.x + player.w > zone.x &&
             player.y < zone.y + zone.h &&
             player.y + player.h > zone.y) {
+                playRefillSound();
             return true;
         }
         return false;

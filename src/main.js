@@ -2,6 +2,7 @@ import { initLanes, resetCars } from "./car.js";
 import { gameLoop, initPlayer, resetPlayer } from "./character.js";
 import { resetHealth } from "./health.js";
 import { initRoadPos, initSheet, resetScene } from "./scene.js";
+import { startBgMusic, startEngine } from "./sound.js";
 import { scale } from "./SpriteCoordinates.js";
 import { activeCar, activeScenes, clearIsActiveButton, isActiveButton, isClickOnCar, isClickOnCloseButton, isClickOnColorButton, isClickOnGuideButton, isClickOnScene, isClickOnSceneButton, isClickOnStartButton, pos, startPage, startPageLoop, stopStartPageLoop } from "./startpage.js";
 import { initPlayerIconSheet } from "./ui.js";
@@ -224,6 +225,7 @@ document.addEventListener("click", (e) => {
         stopStartPageLoop();
         setIsGameRunning();
         resetAll();
+        startEngine();
         requestAnimationFrame(gameLoop);
     }
     if (isClickOnSceneButton(mousePos.x, mousePos.y) && !isGameRunning && !isDead) {
@@ -246,6 +248,7 @@ document.addEventListener("click", (e) => {
     if (isClickOnCloseButton(mousePos.x, mousePos.y) && !isGameRunning && !isDead) {
         clearIsActiveButton();
     }
+    startBgMusic();
 });
 
 

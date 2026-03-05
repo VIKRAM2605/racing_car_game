@@ -3,6 +3,7 @@ import { checkCollision, currentInvinsibleTime, isInvinsible } from "./collision
 import { deductHealth } from "./health.js";
 import { canvas, ctx, isDead, keys, playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4, resetAll, resetIsDead, resetIsGameRunning, setIsDead } from "./main.js";
 import { drawObstacles, drawScene, fuelStationMapForRefill, getRoadBelowPlayer, isPlayerOnTopOfRefillBox, posX, randomSceneGeneration, roads, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
+import { updateEngineSound } from "./sound.js";
 import { player1Sprite, player2Sprite, player3Sprite, player4Sprite, summer } from "./SpriteCoordinates.js";
 import { startPageLoop } from "./startpage.js";
 import { drawFullUI, drawIsDeadTitle } from "./ui.js";
@@ -95,7 +96,11 @@ export function updatePlayer(delta) {
         else player.fuel -= 0.01;
     }
 
-    if (keys.up) {
+    if (keys.down) {
+        player.speed -= delta * 200;
+        if (player.speed < player.minSpeed) player.speed = player.minSpeed;
+    }
+    else if (keys.up) {
 
         if (keys.shift && player.nitro > 0) {
             player.nitro -= delta * 50;
@@ -113,10 +118,6 @@ export function updatePlayer(delta) {
             player.speed -= delta * 100;
             if (player.speed < activeMaxSpeed) player.speed = activeMaxSpeed;
         }
-    }
-    else if (keys.down) {
-        player.speed -= delta * 200;
-        if (player.speed < player.minSpeed) player.speed = player.minSpeed;
     }
     else {
         if (player.speed > player.idleSpeed) {
@@ -179,6 +180,8 @@ export function updatePlayer(delta) {
     lateralVelocity = Math.max(-lateralMaxSpeed, Math.min(lateralMaxSpeed, lateralVelocity));
 
     player.x += lateralVelocity * delta;
+
+    updateEngineSound();
 };
 
 export function drawPlayer() {

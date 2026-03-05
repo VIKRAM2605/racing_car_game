@@ -58,7 +58,7 @@ export function stopStartPageLoop() {
 
 export function drawButtons() {
     const keys = Object.keys(startPageUI);
-    let currentX = posX - startPageUI["start"].sw - scale * 3;
+    let currentX = posX + scale * 4;
     let currentY = canvas.height / window.devicePixelRatio / 2 - keys.length / 2 * startPageUI["start"].sh;
     for (let i = 0; i < keys.length; i++) {
 
@@ -127,7 +127,7 @@ export function drawPageForActiveButton() {
     let bgHeight = Math.round(scale * 130);
 
     let x = posX + summer["road"].sw + scale * 3;
-    let y = canvas.height / window.devicePixelRatio / 2 - bgHeight / 2;
+    let y = canvas.height / window.devicePixelRatio / 2 - bgHeight / 2 + scale * 20;
 
     drawBackGround(x, y, bgWidth, bgHeight);
     drawCloseButton(x + bgWidth - scale * 2, y + scale * 2);
@@ -329,7 +329,7 @@ export function showHowToPlay(x, y) {
 
     ctx.fillStyle = "#ffffff";
     ctx.font = `bold ${scale * 4}px monospace`;
-    ctx.fillText("  ↑/W, ↓/S,  ←/A, →/D   Move Your Car", left, currentY);
+    ctx.fillText("  ↑/W, ↓/S/Space Bar,  ←/A, →/D   Move Your Car", left, currentY);
     currentY += lineH;
 
     ctx.fillStyle = "#FFD700";
