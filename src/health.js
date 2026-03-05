@@ -12,7 +12,6 @@ export function deductHealth() {
         stopEngine();
         playGameOverSound();
         setIsDead();
-        console.log("player is dead");
     }
 };
 

@@ -189,7 +189,6 @@ export function showPlayerColorOption(x, y, w, h) {
     for (let i = 0; i < players.length; i++) {
         const sprite = players[i];
         const sheet = sheets[i];
-        //console.log("currentX:", currentX, "currentY:", currentY);
 
         ctx.drawImage(
             sheet,
@@ -232,7 +231,7 @@ export function isClickOnCar(x, y) {
             y <= val.y + val.h) {
             activeCar = "player" + key[i] + "Sprite";
 
-            changeDefaultPlayer(parseInt(key[i]));
+            changeDefaultPlayer(parseInt(key[i]) - 1);
 
             return true;
         }

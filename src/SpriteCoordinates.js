@@ -64,6 +64,22 @@ export const summerDetails = {
     details5: { x: 0, y: 0, w: 64, h: 16, sw: 64 * scale, sh: 16 * scale },
 };
 
+export const winterDetails = {
+    details1: { x: 0, y: 0, w: 48, h: 16, sw: 48 * scale, sh: 16 * scale },
+    details2: { x: 0, y: 0, w: 48, h: 16, sw: 48 * scale, sh: 16 * scale },
+    details3: { x: 0, y: 0, w: 48, h: 16, sw: 48 * scale, sh: 16 * scale },
+    details4: { x: 0, y: 0, w: 48, h: 16, sw: 48 * scale, sh: 16 * scale },
+    details5: { x: 0, y: 0, w: 48, h: 16, sw: 48 * scale, sh: 16 * scale }
+};
+
+export const desertDetails = {
+    details1: { x: 0, y: 0, w: 64, h: 16, sw: 64 * scale, sh: 16 * scale },
+    details2: { x: 0, y: 0, w: 64, h: 16, sw: 64 * scale, sh: 16 * scale },
+    details3: { x: 0, y: 0, w: 64, h: 16, sw: 64 * scale, sh: 16 * scale },
+    details4: { x: 0, y: 0, w: 64, h: 16, sw: 64 * scale, sh: 16 * scale },
+    details5: { x: 0, y: 0, w: 64, h: 16, sw: 64 * scale, sh: 16 * scale }
+};
+
 export const winter = {
     road: { x: 0, y: 0, w: 64, h: 64, sw: 64 * scale, sh: 64 * scale, stackHeight: 190 },
     gasStation: { x: 0, y: 0, w: 128, h: 304, sw: 128 * scale, sh: 304 * scale, stackHeight: 190 }

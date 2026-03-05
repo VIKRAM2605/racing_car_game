@@ -1,7 +1,8 @@
 import { player } from "./character.js";
-import { canvas, ctx, obstaclesSpriteSheet, randomInt, stationMarkingSpriteSheet, summerDetails1SpriteSheet, summerDetails2SpriteSheet, summerDetails3SpriteSheet, summerDetails4SpriteSheet, summerDetailsSpriteSheet, summerGasStationSpriteSheet, summerRoadSpriteSheet } from "./main.js";
+import { canvas, ctx, desertDetails1SpriteSheet, desertDetails2SpriteSheet, desertDetails3SpriteSheet, desertDetails4SpriteSheet, desertDetailsSpriteSheet, desertGasStationSpriteSheet, desertRoadSpriteSheet, obstaclesSpriteSheet, randomInt, stationMarkingSpriteSheet, summerDetails1SpriteSheet, summerDetails2SpriteSheet, summerDetails3SpriteSheet, summerDetails4SpriteSheet, summerDetailsSpriteSheet, summerGasStationSpriteSheet, summerRoadSpriteSheet, winterDetails1SpriteSheet, winterDetails2SpriteSheet, winterDetails3SpriteSheet, winterDetails4SpriteSheet, winterDetailsSpriteSheet, winterGasStationSpriteSheet, winterRoadSpriteSheet } from "./main.js";
 import { playRefillSound } from "./sound.js";
-import { roadObstackleSprites, scale, stationMarking, summer, summerDetails } from "./SpriteCoordinates.js";
+import { desertDetails, roadObstackleSprites, scale, stationMarking, summer, summerDetails, winterDetails } from "./SpriteCoordinates.js";
+import { activeScenes } from "./startpage.js";
 
 let currentScene = "summer";
 let nextSceneSpawnTime = 5;
@@ -22,6 +23,20 @@ export const detailsMap = {
         "details3": summerDetails["details3"],
         "details4": summerDetails["details4"],
         "details5": summerDetails["details5"],
+    },
+    "winter": {
+        "details1": winterDetails["details1"],
+        "details2": winterDetails["details2"],
+        "details3": winterDetails["details3"],
+        "details4": winterDetails["details4"],
+        "details5": winterDetails["details5"],
+    },
+    "desert": {
+        "details1": desertDetails["details1"],
+        "details2": desertDetails["details2"],
+        "details3": desertDetails["details3"],
+        "details4": desertDetails["details4"],
+        "details5": desertDetails["details5"],
     }
 }
 
@@ -39,6 +54,24 @@ export function initSheet() {
             "details3": summerDetails2SpriteSheet,
             "details4": summerDetails3SpriteSheet,
             "details5": summerDetails4SpriteSheet,
+        },
+        "winter": {
+            "road": winterRoadSpriteSheet,
+            "gasStation": winterGasStationSpriteSheet,
+            "details1": winterDetailsSpriteSheet,
+            "details2": winterDetails1SpriteSheet,
+            "details3": winterDetails2SpriteSheet,
+            "details4": winterDetails3SpriteSheet,
+            "details5": winterDetails4SpriteSheet,
+        },
+        "desert": {
+            "road": desertRoadSpriteSheet,
+            "gasStation": desertGasStationSpriteSheet,
+            "details1": desertDetailsSpriteSheet,
+            "details2": desertDetails1SpriteSheet,
+            "details3": desertDetails2SpriteSheet,
+            "details4": desertDetails3SpriteSheet,
+            "details5": desertDetails4SpriteSheet,
         }
     };
 };
@@ -229,6 +262,7 @@ export function refillRoads() {
 }
 
 export function drawScene() {
+
     drawDetails();
     drawRoad();
     drawObstacles();
@@ -283,15 +317,16 @@ export function drawDetails() {
                     detail.x, detail.y, detail.w, detail.h,
                     currentW, drawY, detail.sw, detail.sh
                 );
-                currentW += detail.sw;
+                currentW += detail.sw - 1;
             }
             else if (currentW < leftEdge) {
-                const sprite = detailsMap[currentScene]["details2"]
+                const sprite = detailsMap[currentScene]["details3"]
                 ctx.drawImage(
                     sheet,
                     sprite.x, sprite.y, sprite.w, sprite.h,
                     currentW, drawY, sprite.sw, sprite.sh
-                )
+                );
+                currentW += sprite.sw - 1;
             }
         }
         currentH += detailsMap[currentScene]["details1"].sh - 1;
@@ -310,7 +345,7 @@ export function drawDetails() {
                 detail.x, detail.y, detail.w, detail.h,
                 currentW, drawY, detail.sw, detail.sh
             );
-            currentW += detail.sw;
+            currentW += detail.sw - 1;
         }
         currentH += detailsMap[currentScene]["details1"].sh - 1;
     }
@@ -397,7 +432,6 @@ export function spawnObstacles(delta) {
             h: roadObstackleSprites[spriteKey].sh,
             currentFacing: "up",
         });
-        console.log(obstacles);
     }
 };
 
@@ -484,7 +518,7 @@ export function isPlayerOnTopOfRefillBox() {
             player.x + player.w > zone.x &&
             player.y < zone.y + zone.h &&
             player.y + player.h > zone.y) {
-                playRefillSound();
+            playRefillSound();
             return true;
         }
         return false;
