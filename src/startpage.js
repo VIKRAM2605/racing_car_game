@@ -107,14 +107,14 @@ export function isClickOnColorButton(x, y) {
     )
 };
 
-// export function isClickOnShopButton(x, y) {
-//     return (
-//         x >= pos["shop"].x &&
-//         x <= pos["shop"].x + pos["shop"].w &&
-//         y >= pos["shop"].y &&
-//         y <= pos["shop"].y + pos["shop"].h
-//     )
-// };
+export function isClickOnGuideButton(x, y) {
+    return (
+        x >= pos["guide"].x &&
+        x <= pos["guide"].x + pos["guide"].w &&
+        y >= pos["guide"].y &&
+        y <= pos["guide"].y + pos["guide"].h
+    )
+};
 
 export function clearIsActiveButton() {
     isActiveButton[0] = null;
@@ -134,6 +134,7 @@ export function drawPageForActiveButton() {
     drawTitle(x + bgWidth / 2, y + scale * 2);
     showPlayerColorOption(x, y, bgWidth, bgHeight);
     drawSceneOnStartPage(x, y);
+    showHowToPlay(x, y);
 };
 
 export function drawBackGround(x, y, w = scale * 20, h = scale * 20, radius = 10) {
@@ -311,4 +312,77 @@ export function isClickOnScene(x, y) {
         }
     }
     return false;
+};
+
+export function showHowToPlay(x, y) {
+    if (isActiveButton[0] !== "guide") return;
+
+    const left = x + scale * 5;
+    let currentY = y + scale * 25;
+    const lineH = scale * 10;
+
+    ctx.fillStyle = "#FFD700";
+    ctx.font = `bold ${scale * 5}px monospace`;
+    ctx.textAlign = "left";
+    ctx.fillText("CONTROLS", left, currentY);
+    currentY += lineH;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `bold ${scale * 4}px monospace`;
+    ctx.fillText("  ↑/W, ↓/S,  ←/A, →/D   Move Your Car", left, currentY);
+    currentY += lineH;
+
+    ctx.fillStyle = "#FFD700";
+    ctx.font = `bold ${scale * 5}px monospace`;
+    ctx.fillText("OBSTACLES", left, currentY);
+    currentY += lineH;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `bold ${scale * 4}px monospace`;
+    ctx.fillText("  Dodge Cones, Barricades, Potholes", left, currentY);
+    currentY += lineH;
+
+    ctx.fillStyle = "#FFD700";
+    ctx.font = `bold ${scale * 5}px monospace`;
+    ctx.fillText("Fuel", left, currentY);
+    currentY += lineH;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `bold ${scale * 4}px monospace`;
+    ctx.fillText("  Pull into Gas Stations to top up your fuel", left, currentY);
+    currentY += lineH;
+
+    // ctx.fillStyle = "#ffffff";
+    // ctx.font = `bold ${scale * 4}px monospace`;
+    // ctx.fillText("  to top up your fuel", left, currentY);
+    // currentY += lineH;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `bold ${scale * 4}px monospace`;
+    ctx.fillText("  Don't Stay OffRoad too Long else you lose a heart and", left, currentY);
+    currentY += lineH;
+
+    // ctx.fillStyle = "#ffffff";
+    // ctx.font = `bold ${scale * 4}px monospace`;
+    // ctx.fillText("  else you lose a heart and", left, currentY);
+    // currentY += lineH;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `bold ${scale * 4}px monospace`;
+    ctx.fillText("  fuel will be consumed more", left, currentY);
+    currentY += lineH;
+
+    ctx.fillStyle = "#FFD700";
+    ctx.bold = `bold ${scale * 5}px monospace`;
+    ctx.fillText("HEALTH", left, currentY);
+    currentY += lineH;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.bold = `bold ${scale * 4}px monospace`;
+    ctx.fillText("  You Have 3 lives —", left, currentY);
+    currentY += lineH;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.bold = `bold ${scale * 4}px monospace`;
+    ctx.fillText("  survive as long as you can!", left, currentY);
 }
