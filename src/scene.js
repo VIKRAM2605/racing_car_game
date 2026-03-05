@@ -68,6 +68,39 @@ export function initRoadPos() {
             detailsForRight[i][j] = randomDetailsGeneration();
         }
     }
+
+    const rightLaneCenter = posX + road.sw * 0.67;
+    const arrow = stationMarking["arrowRight"];
+    const pump = stationMarking["pump"];
+    const gap = scale * 5;
+
+    const totalW = pump.sw + gap + arrow.sw;
+    const startX = rightLaneCenter - totalW / 2;
+
+    gasStationMarking[0] = {
+        x: startX,
+        y: null,
+        sprite: pump,
+        key: "pump"
+    };
+    gasStationMarking[1] = {
+        x: startX + pump.sw + gap,
+        y: null,
+        sprite: arrow,
+        key: "arrowRight"
+    };
+    gasStationMarking[2] = {
+        x: rightLaneCenter - stationMarking["60"].sw / 2,
+        y: null,
+        sprite: stationMarking["60"],
+        key: "60"
+    };
+    gasStationMarking[3] = {
+        x: rightLaneCenter - stationMarking["30"].sw / 2,
+        y: null,
+        sprite: stationMarking["30"],
+        key: "30"
+    }
 };
 
 export function resetScene() {
@@ -81,6 +114,7 @@ export function resetScene() {
     roadsUntilNextBunk = 6;
     bunkSpacingIncrease = 2;
     refillZones = [];
+    gasStationMarking = [];
 }
 
 export const scene = ["summer"];
@@ -93,6 +127,7 @@ export let roadMarkings = [];
 export const spawnObstacleTime = 2;
 export let currentSpawnObstacleTime = 0;
 export let refillZones = [];
+export let gasStationMarking = [];
 
 export function randomSceneGeneration(delta) {
     currentTime += delta
@@ -175,7 +210,7 @@ export function refillRoads() {
                 roadsUntilNextBunk = 30;
             } else {
                 roadsUntilNextBunk += bunkSpacingIncrease;
-                bunkSpacingIncrease += 1;
+                bunkSpacingIncrease += 2;
             }
             roads.push("gasStation");
             spawnGasStationObstacles();
@@ -219,6 +254,12 @@ export function drawRoad() {
         if (roads[i + 1] === "gasStation") {
             drawArrowToStation(drawY);
             drawStationObtacles(drawY);
+        }
+        if (roads[i + 3] === "gasStation") {
+            drawPetrolPumpMarking("30", drawY);
+        }
+        if (roads[i + 6] === "gasStation") {
+            drawPetrolPumpMarking("60", drawY);
         }
     }
 };
@@ -386,16 +427,45 @@ export function drawStationObtacles(y) {
     }
 }
 
-export function drawPetrolPumpMarking() {
+export function drawPetrolPumpMarking(distance, y) {
+    const arrowObj = gasStationMarking[0];
+    const pumpObj = gasStationMarking[1];
 
+    ctx.drawImage(
+        stationMarkingSpriteSheet,
+        pumpObj.sprite.x, pumpObj.sprite.y, pumpObj.sprite.w, pumpObj.sprite.h,
+        pumpObj.x, y, pumpObj.sprite.sw, pumpObj.sprite.sh
+    );
+
+    ctx.drawImage(
+        stationMarkingSpriteSheet,
+        arrowObj.sprite.x, arrowObj.sprite.y, arrowObj.sprite.w, arrowObj.sprite.h,
+        arrowObj.x, y, arrowObj.sprite.sw, arrowObj.sprite.sh
+    );
+
+    const maxTopHeight = Math.max(pumpObj.sprite.sh, arrowObj.sprite.sh);
+    const distanceY = y + maxTopHeight + scale * 5;
+
+    for (let i = 2; i < 4; i++) {
+        const obj = gasStationMarking[i];
+        if (distance === obj.key) {
+            ctx.drawImage(
+                stationMarkingSpriteSheet,
+                obj.sprite.x, obj.sprite.y, obj.sprite.w, obj.sprite.h,
+                obj.x, distanceY, obj.sprite.sw, obj.sprite.sh
+            );
+        }
+    }
 };
 
 export function drawArrowToStation(y) {
-    const sprite = stationMarking["arrowRight"]
+    const sprite = stationMarking["arrowRight"];
+    const rightLaneCenter = posX + summer["road"].sw * 0.75;
+
     ctx.drawImage(
         stationMarkingSpriteSheet,
         sprite.x, sprite.y, sprite.w, sprite.h,
-        posX + summer["road"].sw / 2 + sprite.sw, y - sprite.sh * 7, sprite.sw, sprite.sh
+        rightLaneCenter + sprite.sw / 2, y - sprite.sh * 7, sprite.sw, sprite.sh
     );
 };
 
@@ -414,9 +484,6 @@ export function isPlayerOnTopOfRefillBox() {
             player.y + player.h > zone.y) {
             return true;
         }
-
-
-
         return false;
     }
 };
