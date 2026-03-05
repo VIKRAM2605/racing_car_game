@@ -107,14 +107,14 @@ export function isClickOnColorButton(x, y) {
     )
 };
 
-export function isClickOnShopButton(x, y) {
-    return (
-        x >= pos["shop"].x &&
-        x <= pos["shop"].x + pos["shop"].w &&
-        y >= pos["shop"].y &&
-        y <= pos["shop"].y + pos["shop"].h
-    )
-};
+// export function isClickOnShopButton(x, y) {
+//     return (
+//         x >= pos["shop"].x &&
+//         x <= pos["shop"].x + pos["shop"].w &&
+//         y >= pos["shop"].y &&
+//         y <= pos["shop"].y + pos["shop"].h
+//     )
+// };
 
 export function clearIsActiveButton() {
     isActiveButton[0] = null;

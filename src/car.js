@@ -2,7 +2,7 @@ import { player } from "./character.js";
 import { canvas, ctx, npcSpriteSheet, randomInt } from "./main.js";
 import { npc1Sprite, npc2Sprite, npc3Sprite, npc4Sprite, summer } from "./SpriteCoordinates.js";
 
-let cars = [];
+export let cars = [];
 let spawnDelay = 2;
 let currentSpawn = 0;
 let lanes = [0, 0];
@@ -23,7 +23,7 @@ export function initLanes() {
     lanes[1] = lane2;
 }
 
-export function resetCars(){
+export function resetCars() {
     cars = [];
 }
 
@@ -72,6 +72,8 @@ export function spawnCars(delta) {
             y: y,
             sprite: sprite,
             facing: currentFacing,
+            w: sprite.sw,
+            h: sprite.sh
         })
     }
 };

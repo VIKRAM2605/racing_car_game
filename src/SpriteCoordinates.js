@@ -145,9 +145,11 @@ export const startPageUI = {
     "start": { x: 0, y: 24, w: 32, h: 8, sw: 32 * (scale + 2), sh: 8 * (scale + 2) },
     "scene": { x: 0, y: 36, w: 32, h: 8, sw: 32 * (scale + 2), sh: 8 * (scale + 2) },
     "cars": { x: 0, y: 49, w: 32, h: 8, sw: 32 * (scale + 2), sh: 8 * (scale + 2) },
-    "shop": { x: 0, y: 62, w: 32, h: 8, sw: 32 * (scale + 2), sh: 8 * (scale + 2) }
+    //"shop": { x: 0, y: 62, w: 32, h: 8, sw: 32 * (scale + 2), sh: 8 * (scale + 2) }
 };
 
 export const closeButtonSprite = { x: 5, y: 92, w: 11, h: 11, sw: 11 * scale, sh: 11 * scale };
 
 export const selectedButtonSprite = { x: 3, y: 105, w: 15, h: 11, sw: 15 * scale, sh: 11 * scale };
+
+export const gameOverSprite = { x: 120, y: 122, w: 340, h: 217, sw: (scale - 2) * 340, sh: (scale - 2) * 217 };

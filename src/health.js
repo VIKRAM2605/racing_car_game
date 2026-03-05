@@ -1,4 +1,6 @@
-export let health = [1, 1, 0];
+import { setIsDead } from "./main.js";
+
+export let health = [1, 1, 1];
 
 export function deductHealth() {
     const lastIndexOfOne = health.lastIndexOf(1);
@@ -6,6 +8,7 @@ export function deductHealth() {
         health[lastIndexOfOne] = 0;
     }
     if (checkLife() === -1) {
+        setIsDead();
         console.log("player is dead");
     }
 };

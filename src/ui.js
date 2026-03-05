@@ -1,7 +1,7 @@
 import { player, playerSprite } from "./character.js";
 import { health } from "./health.js";
-import { canvas, carrotSpriteSheet, cherrySpriteSheet, ctx, damageSpriteSheet, fuelBarSpriteSheet, fullSpriteSheet, lemonSpriteSheet, numbersSpriteSheet, playerIndicatorSpriteSheet, randomInt, slimeSpriteSheet } from "./main.js";
-import { damageSprite, numbers, playerIcons, scale, ui } from "./SpriteCoordinates.js";
+import { canvas, carrotSpriteSheet, cherrySpriteSheet, ctx, damageSpriteSheet, fuelBarSpriteSheet, fullSpriteSheet, gameOverSpriteSheet, isDead, lemonSpriteSheet, numbersSpriteSheet, playerIndicatorSpriteSheet, randomInt, slimeSpriteSheet } from "./main.js";
+import { damageSprite, gameOverSprite, numbers, playerIcons, scale, ui } from "./SpriteCoordinates.js";
 
 export let currentPlayerIcon = "lemon";
 
@@ -30,7 +30,7 @@ export function randomPlayerIcon() {
 
 export function drawFullUI(delta) {
     mainUI();
-    drawPlayerIndicator();
+    if (!isDead) drawPlayerIndicator();
     drawPlayerIcon(delta);
     drawSpeed();
     drawFuelBar();
@@ -148,5 +148,15 @@ export function drawHealth() {
         drawX += sprite.sw + scale * 3;
     }
 };
+
+export function drawIsDeadTitle(delta) {
+    const totalW = canvas.width / window.devicePixelRatio - ui["full"].sw;
+    ctx.drawImage(
+        gameOverSpriteSheet,
+        gameOverSprite.x, gameOverSprite.y, gameOverSprite.w, gameOverSprite.h,
+        totalW / 2 - gameOverSprite.sw / 2, canvas.height / window.devicePixelRatio / 2 - gameOverSprite.sh / 2,
+        gameOverSprite.sw, gameOverSprite.sh
+    );
+}
 
 console.log(window.innerWidth, window.innerHeight)

@@ -77,15 +77,18 @@ export function resetScene() {
     obstacles = [];
     gasStationObstacles = [];
     roadMarkings = [];
+    roadsSinceLastBunk = 0;
+    roadsUntilNextBunk = 6;
+    bunkSpacingIncrease = 2;
 }
 
 export const scene = ["summer"];
 export let roads = [];
-export const detailsForLeft = [];
-export const detailsForRight = [];
+export let detailsForLeft = [];
+export let detailsForRight = [];
 export let obstacles = [];
-export const gasStationObstacles = [];
-export const roadMarkings = [];
+export let gasStationObstacles = [];
+export let roadMarkings = [];
 export const spawnObstacleTime = 2;
 export let currentSpawnObstacleTime = 0;
 
@@ -166,8 +169,12 @@ export function refillRoads() {
         roadsSinceLastBunk++;
         if (roadsSinceLastBunk > roadsUntilNextBunk) {
             roadsSinceLastBunk = 0;
-            roadsUntilNextBunk += bunkSpacingIncrease;
-            bunkSpacingIncrease += 2;
+            if (roadsUntilNextBunk > 30) {
+                roadsUntilNextBunk = 30;
+            } else {
+                roadsUntilNextBunk += bunkSpacingIncrease;
+                bunkSpacingIncrease += 1;
+            }
             roads.push("gasStation");
             spawnGasStationObstacles();
             totalH += summer["gasStation"].stackHeight;
@@ -284,16 +291,25 @@ export function spawnGasStationObstacles() {
         x: posX + summer["road"].sw - roadObstackleSprites["cone"].sw - scale * 4,
         sprite: "cone",
         isDeadly: true,
+        w: roadObstackleSprites["cone"].sw,
+        h: roadObstackleSprites["cone"].sh,
+        currentFacing: "up"
     });
     gasStationObstacles.push({
-        x: posX + summer["road"].sw + roadObstackleSprites["cone"].sw,
+        x: posX + summer["road"].sw + roadObstackleSprites["cone"].sw - scale * 3,
         sprite: "cone",
         isDeadly: true,
+        w: roadObstackleSprites["cone"].sw,
+        h: roadObstackleSprites["cone"].sh,
+        currentFacing: "up"
     });
     gasStationObstacles.push({
         x: posX + summer["road"].sw - roadObstackleSprites["barricade"].sw + scale * 2,
         sprite: "barricade",
         isDeadly: true,
+        w: roadObstackleSprites["barricade"].sw,
+        h: roadObstackleSprites["barricade"].sh,
+        currentFacing: "up"
     })
 };
 
@@ -325,7 +341,10 @@ export function spawnObstacles(delta) {
             x: x,
             y: -500,
             isDeadly: isDeadly,
-            sprite: spriteKey
+            sprite: spriteKey,
+            w: roadObstackleSprites[spriteKey].sw,
+            h: roadObstackleSprites[spriteKey].sh,
+            currentFacing: "up",
         });
         console.log(obstacles);
     }
@@ -350,8 +369,9 @@ export function drawStationObtacles(y) {
         ctx.drawImage(
             obstaclesSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
-            obs.x, y - sprite.sh * 14, sprite.sw, sprite.sh
+            obs.x, y - sprite.sh * 18, sprite.sw, sprite.sh
         );
+        obs.y = y - sprite.sh * 18;
     }
 }
 

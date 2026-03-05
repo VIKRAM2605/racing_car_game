@@ -1,10 +1,11 @@
 import { drawCars, spawnCars, updateCars } from "./car.js";
-import { drawPlayerBox } from "./collision.js";
+import { checkCollision } from "./collision.js";
 import { deductHealth } from "./health.js";
-import { canvas, ctx, keys, playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4 } from "./main.js";
+import { canvas, ctx, isDead, keys, playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4, resetAll, resetIsDead, resetIsGameRunning, setIsDead } from "./main.js";
 import { drawObstacles, drawScene, getRoadBelowPlayer, posX, randomSceneGeneration, roads, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
 import { player1Sprite, player2Sprite, player3Sprite, player4Sprite, summer } from "./SpriteCoordinates.js";
-import { drawFullUI } from "./ui.js";
+import { startPageLoop } from "./startpage.js";
+import { drawFullUI, drawIsDeadTitle } from "./ui.js";
 
 export let defaultPlayerSheet;
 export let playerSprite;
@@ -13,6 +14,9 @@ export let fuelCurrentTime = 0;
 
 export let maxOffRoadTime = 3;
 export let currentOffRoadTime = 0;
+
+export const isDeadTimer = 5;
+export let currentIsDeadTimer = 0;
 
 export const player = {
     x: 0,
@@ -36,23 +40,24 @@ export function initPlayer() {
     defaultPlayerSheet = playerSpriteSheet1;
     playerSprite = player1Sprite;
 
-    player.x = canvas.width / window.devicePixelRatio / 2 - (summer["road"].sw) / 2 + player1Sprite["up"].sw + 22;
+    player.x = canvas.width / window.devicePixelRatio / 2 - (summer["road"].sw) / 2 + playerSprite["up"].sw + 22;
     player.y = canvas.height / window.devicePixelRatio / 2 + 100;
-    const playerSheet = [playerSpriteSheet1,playerSpriteSheet2,playerSpriteSheet3,playerSpriteSheet4];
+    playerSheet = [playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4];
 };
 
-export const playerKey = [player1Sprite,player2Sprite,player3Sprite,player4Sprite];
-export const playerSheet = [];
+export const playerKey = [player1Sprite, player2Sprite, player3Sprite, player4Sprite];
+export let playerSheet = [];
 
-export function changeDefaultPlayer(key){
+export function changeDefaultPlayer(key) {
     playerSprite = playerKey[key];
     defaultPlayerSheet = playerSheet[key];
 };
 
 export function resetPlayer() {
     player.speed = 100;
-    player.isDead = false;
     player.fuel = 1;
+    player.x = canvas.width / window.devicePixelRatio / 2 - (summer["road"].sw) / 2 + playerSprite["up"].sw + 22;
+    player.currentFacing = "up";
 }
 
 let lastTime = 0;
@@ -60,7 +65,7 @@ export let angle = 0;
 let animationId = null;
 
 export function updatePlayer(delta) {
-
+    if (isDead) return;
     let moveX = 0;
     let moveY = 0;
 
@@ -131,11 +136,12 @@ export function updatePlayer(delta) {
             currentOffRoadTime -= maxOffRoadTime;
             deductHealth();
         }
+        player.fuel -= 0.01;
     } else {
         currentOffRoadTime = 0;
     }
 
-    let steeringSpeed = 150;
+    let steeringSpeed = 250;
 
     player.x += moveX * steeringSpeed * delta;
 };
@@ -148,6 +154,8 @@ export function drawPlayer() {
         pos.x, pos.y, pos.w, pos.h,
         player.x, player.y, pos.sw, pos.sh
     );
+    player.w = pos.sw;
+    player.h = pos.sh;
 };
 
 export function gameLoop(currentTime) {
@@ -172,10 +180,28 @@ export function gameLoop(currentTime) {
     drawScene();
     drawFullUI(delta);
     drawObstacles();
-    drawPlayer();
     drawCars();
 
-    drawPlayerBox(); // debugging for now will remove in future or i will make it enable through key press;
+    if (isDead) {
+        currentIsDeadTimer += delta;
+        if (currentIsDeadTimer > isDeadTimer) {
+            stopGameLoop();
+            resetIsDead();
+            resetAll();
+            resetIsGameRunning();
+            requestAnimationFrame(startPageLoop);
+            return;
+        }
+        drawIsDeadTitle();
+    } else {
+        drawPlayer();
+    }
+
+    const check = checkCollision();// Need to add a cooldown period so player only lose one heart per collision and have a invinsible period
+    if (check && !isDead) {
+        console.log("colliding");
+        deductHealth();
+    }
 
     animationId = requestAnimationFrame(gameLoop);
 };
