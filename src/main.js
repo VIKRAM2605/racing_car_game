@@ -86,7 +86,7 @@ export const lemonSpriteSheet = new Image();
 lemonSpriteSheet.src = "assets/Player_icons/Lemon.png";
 
 export const slimeSpriteSheet = new Image();
-slimeSpriteSheet.src = "assets/Player_icons/slime.png";
+slimeSpriteSheet.src = "assets/Player_icons/Slime.png";
 
 export const obstaclesSpriteSheet = new Image();
 obstaclesSpriteSheet.src = "assets/Props/Misc_props.png";
