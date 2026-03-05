@@ -2,7 +2,7 @@ import { drawCars, spawnCars, updateCars } from "./car.js";
 import { checkCollision, currentInvinsibleTime, isInvinsible } from "./collision.js";
 import { deductHealth } from "./health.js";
 import { canvas, ctx, isDead, keys, playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4, resetAll, resetIsDead, resetIsGameRunning, setIsDead } from "./main.js";
-import { drawObstacles, drawScene, getRoadBelowPlayer, posX, randomSceneGeneration, roads, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
+import { drawObstacles, drawScene, fuelStationMapForRefill, getRoadBelowPlayer, isPlayerOnTopOfRefillBox, posX, randomSceneGeneration, roads, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
 import { player1Sprite, player2Sprite, player3Sprite, player4Sprite, summer } from "./SpriteCoordinates.js";
 import { startPageLoop } from "./startpage.js";
 import { drawFullUI, drawIsDeadTitle } from "./ui.js";
@@ -202,11 +202,15 @@ export function gameLoop(currentTime) {
         drawPlayer();
     }
 
-    const check = checkCollision(delta);// Need to add a cooldown period so player only lose one heart per collision and have a invinsible period
+    const check = checkCollision(delta);
     if (check && !isDead) {
         console.log("colliding");
         deductHealth();
     }
+    if(isPlayerOnTopOfRefillBox()){
+        player.fuel = 1;
+    }
+    fuelStationMapForRefill();
 
     animationId = requestAnimationFrame(gameLoop);
 };

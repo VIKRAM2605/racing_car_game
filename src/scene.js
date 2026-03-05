@@ -80,6 +80,7 @@ export function resetScene() {
     roadsSinceLastBunk = 0;
     roadsUntilNextBunk = 6;
     bunkSpacingIncrease = 2;
+    refillZones = [];
 }
 
 export const scene = ["summer"];
@@ -91,6 +92,7 @@ export let gasStationObstacles = [];
 export let roadMarkings = [];
 export const spawnObstacleTime = 2;
 export let currentSpawnObstacleTime = 0;
+export let refillZones = [];
 
 export function randomSceneGeneration(delta) {
     currentTime += delta
@@ -310,6 +312,12 @@ export function spawnGasStationObstacles() {
         w: roadObstackleSprites["barricade"].sw,
         h: roadObstackleSprites["barricade"].sh,
         currentFacing: "up"
+    });
+    refillZones.push({
+        x: posX + summer["road"].sw + scale * 10,
+        y: null,
+        w: + scale * 50,
+        h: scale * 50
     })
 };
 
@@ -373,6 +381,9 @@ export function drawStationObtacles(y) {
         );
         obs.y = y - sprite.sh * 18;
     }
+    for (let i = 0; i < refillZones.length; i++) {
+        refillZones[i].y = y - scale * 190;
+    }
 }
 
 export function drawPetrolPumpMarking() {
@@ -387,3 +398,25 @@ export function drawArrowToStation(y) {
         posX + summer["road"].sw / 2 + sprite.sw, y - sprite.sh * 7, sprite.sw, sprite.sh
     );
 };
+
+export function fuelStationMapForRefill() {
+    refillZones = refillZones.filter(zone => zone.y === null || zone.y < 3000);
+};
+
+export function isPlayerOnTopOfRefillBox() {
+    for (const zone of refillZones) {
+        if (zone.y === null) continue;
+        // ctx.fillStyle = "red";
+        // ctx.strokeRect(zone.x, zone.y, zone.w, zone.h);
+        if (player.x < zone.x + zone.w &&
+            player.x + player.w > zone.x &&
+            player.y < zone.y + zone.h &&
+            player.y + player.h > zone.y) {
+            return true;
+        }
+
+
+
+        return false;
+    }
+}
