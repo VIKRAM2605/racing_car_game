@@ -419,4 +419,4 @@ export function isPlayerOnTopOfRefillBox() {
 
         return false;
     }
-}
+};

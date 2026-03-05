@@ -68,6 +68,10 @@ export function updatePlayer(delta) {
     if (isDead) return;
     let moveX = 0;
     let moveY = 0;
+    if (player.fuel <= 0) {
+        setIsDead();
+        return;
+    }
 
     let activeMaxSpeed = keys.shift && player.nitro > 0 ? player.maxSpeed + 75 : player.maxSpeed;
 
@@ -207,7 +211,7 @@ export function gameLoop(currentTime) {
         console.log("colliding");
         deductHealth();
     }
-    if(isPlayerOnTopOfRefillBox()){
+    if (isPlayerOnTopOfRefillBox()) {
         player.fuel = 1;
     }
     fuelStationMapForRefill();
