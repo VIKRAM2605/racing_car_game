@@ -1,5 +1,5 @@
 import { cars } from "./car.js";
-import { player, playerSprite } from "./character.js";
+import { player, playerSprite, steeringAngle } from "./character.js";
 import { ctx } from "./main.js";
 import { gasStationObstacles, obstacles } from "./scene.js";
 
@@ -13,15 +13,15 @@ export const invinsibleTime = 3;
 export let currentInvinsibleTime = 0;
 export let isInvinsible = false;
 
-export function getCarCorners(player, paddingX = 4, paddingY = 4) {
-    const angle = directionalAngles[player.currentFacing] ?? 0;
+export function getCarCorners(entity, paddingX = 4, paddingY = 4) {
+    const angle = entity === player ? steeringAngle : directionalAngles[player.currentFacing] ?? 0;
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
-    const w = player.w / 2 - paddingX;
-    const h = player.h / 2 - paddingY;
+    const w = entity.w / 2 - paddingX;
+    const h = entity.h / 2 - paddingY;
 
-    const cx = player.x + player.w / 2;
-    const cy = player.y + player.h / 2;
+    const cx = entity.x + entity.w / 2;
+    const cy = entity.y + entity.h / 2;
 
     return [
         { x: cx + (-w * cos - -h * sin), y: cy + (-w * sin + -h * cos) },

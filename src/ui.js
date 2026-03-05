@@ -150,7 +150,7 @@ export function drawHealth() {
 };
 
 export function drawIsDeadTitle(delta) {
-    const totalW = canvas.width / window.devicePixelRatio - ui["full"].sw;
+    const totalW = canvas.width / window.devicePixelRatio;
     ctx.drawImage(
         gameOverSpriteSheet,
         gameOverSprite.x, gameOverSprite.y, gameOverSprite.w, gameOverSprite.h,

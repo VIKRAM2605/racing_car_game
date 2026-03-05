@@ -18,6 +18,17 @@ export let currentOffRoadTime = 0;
 export const isDeadTimer = 5;
 export let currentIsDeadTimer = 0;
 
+export let steeringAngle = 0;
+let lateralVelocity = 0;
+
+const maxSteer = 0.7;
+const steerSpeed = 8;
+const steerReturn = 10;
+
+const lateralMaxSpeed = 320;
+const lateralFriction = 900;
+const lateralAccel = 1400;
+
 export const player = {
     x: 0,
     y: 0,
@@ -58,6 +69,7 @@ export function resetPlayer() {
     player.fuel = 1;
     player.x = canvas.width / window.devicePixelRatio / 2 - (summer["road"].sw) / 2 + playerSprite["up"].sw + 22;
     player.currentFacing = "up";
+    currentIsDeadTimer = 0;
 }
 
 let lastTime = 0;
@@ -122,14 +134,28 @@ export function updatePlayer(delta) {
     if (keys.left) moveX -= 1;
     if (keys.right) moveX += 1;
 
-    if (moveX === 1) {
-        player.currentFacing = "upRight";
+    const len = Math.sqrt(moveX * moveX + moveY * moveY);
+    if (len > 0) {
+        moveX /= len;
+        moveY /= len;
     }
-    else if (moveX === -1) {
-        player.currentFacing = "upLeft";
+
+    const speedFactor = 0.5 + (player.speed / player.maxSpeed) * 0.5
+
+    if (moveX > 0) {
+        //player.currentFacing = "upRight";
+        steeringAngle = Math.min(steeringAngle + steerSpeed * delta, maxSteer);
+        lateralVelocity += lateralAccel * speedFactor * delta;
+    }
+    else if (moveX < 0) {
+        //player.currentFacing = "upLeft";
+        steeringAngle = Math.max(steeringAngle - steerSpeed * delta, -maxSteer);
+        lateralVelocity -= lateralAccel * speedFactor * delta;
     }
     else {
-        player.currentFacing = "up";
+        //player.currentFacing = "up";
+        if (steeringAngle > 0) steeringAngle = Math.max(steeringAngle - steerReturn * delta, 0);
+        if (steeringAngle < 0) steeringAngle = Math.min(steeringAngle + steerReturn * delta, 0);
     }
     const road = getRoadBelowPlayer();
     const roadRight = posX + road.sw;
@@ -140,14 +166,19 @@ export function updatePlayer(delta) {
             currentOffRoadTime -= maxOffRoadTime;
             deductHealth();
         }
-        player.fuel -= 0.01;
+        player.fuel -= 0.01 * delta;
     } else {
         currentOffRoadTime = 0;
     }
 
-    let steeringSpeed = 250;
+    if (moveX === 0 || (moveX < 0 && lateralVelocity > 0) || (moveX > 0 && lateralVelocity < 0)) {
+        if (lateralVelocity > 0) lateralVelocity = Math.max(0, lateralVelocity - lateralFriction * delta);
+        if (lateralVelocity < 0) lateralVelocity = Math.min(0, lateralVelocity + lateralFriction * delta);
+    }
 
-    player.x += moveX * steeringSpeed * delta;
+    lateralVelocity = Math.max(-lateralMaxSpeed, Math.min(lateralMaxSpeed, lateralVelocity));
+
+    player.x += lateralVelocity * delta;
 };
 
 export function drawPlayer() {
@@ -157,12 +188,21 @@ export function drawPlayer() {
         if (shouldHide) return;
     }
     ctx.imageSmoothingEnabled = false;
+
     const pos = playerSprite[player.currentFacing];
+    const cx = player.x + pos.sw / 2;
+    const cy = player.y + pos.sh / 2;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(steeringAngle);
     ctx.drawImage(
         defaultPlayerSheet,
         pos.x, pos.y, pos.w, pos.h,
-        player.x, player.y, pos.sw, pos.sh
+        -pos.sw / 2, -pos.sh / 2, pos.sw, pos.sh
     );
+    ctx.restore();
+
     player.w = pos.sw;
     player.h = pos.sh;
 };
