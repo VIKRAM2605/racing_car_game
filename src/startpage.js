@@ -133,7 +133,7 @@ export function drawPageForActiveButton() {
     drawCloseButton(x + bgWidth - scale * 2, y + scale * 2);
     drawTitle(x + bgWidth / 2, y + scale * 2);
     showPlayerColorOption(x, y, bgWidth, bgHeight);
-    drawSceneOnStartPage(x, y);
+    drawSceneOnStartPage(x, y, bgWidth);
     showHowToPlay(x, y);
 };
 
@@ -249,7 +249,7 @@ export function isClickOnCloseButton(x, y) {
     );
 };
 
-export function drawSceneOnStartPage(x, y) {
+export function drawSceneOnStartPage(x, y, w) {
     if (isActiveButton[0] !== "scene") return;
 
     let currentX = x + scale * 5;
@@ -258,6 +258,16 @@ export function drawSceneOnStartPage(x, y) {
     let scenes = [summer["road"], winter["road"], desert["road"]];
     let sheets = [summerRoadSpriteSheet, winterRoadSpriteSheet, desertRoadSpriteSheet];
     let keys = ["summer", "winter", "desert"];
+
+    ctx.fillStyle = "#FFD700";
+    ctx.font = `bold ${scale * 5}px monospace`;
+    ctx.fillText("Note:", currentX + w / 2 - scale * 22, currentY + scale * 3);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `bold ${scale * 4}px monospace`;
+    ctx.fillText("  Selecting 2+ scenes", currentX + w / 2 - scale * 22, currentY + scale * 14);
+    ctx.fillText("  randomly spawns them across", currentX + w / 2 - scale * 22, currentY + scale * 28);
+    ctx.fillText("  the Start Page and in-game.", currentX + w / 2 - scale * 22, currentY + scale * 42);
 
     for (let i = 0; i < keys.length; i++) {
         const sprite = scenes[i];

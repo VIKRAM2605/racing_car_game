@@ -271,7 +271,7 @@ export function drawDetails() {
     const sceneSheets = sceneSpriteSheetMap[currentScene];
     const leftEdge = posX;
     const rightEdge = posX + summer["road"].sw;
-    const tileH = sceneDetails["details1"].sh - 1;
+    const tileH = sceneDetails["details1"].sh - scale * 0.36;
     let currentH = 0;
 
     for (let i = 0; i < detailsForLeft.length; i++) {
@@ -283,11 +283,11 @@ export function drawDetails() {
             const drawY = detailsPosY + currentH - detail.sh;
             if (currentW < leftEdge - detail.sw) {
                 ctx.drawImage(sheet, detail.x, detail.y, detail.w, detail.h, currentW, drawY, detail.sw, detail.sh);
-                currentW += detail.sw - 1;
+                currentW += detail.sw - scale * 0.36;
             } else if (currentW < leftEdge) {
                 const sprite = sceneDetails["details3"];
                 ctx.drawImage(sheet, sprite.x, sprite.y, sprite.w, sprite.h, currentW, drawY, sprite.sw, sprite.sh);
-                currentW += sprite.sw - 1;
+                currentW += sprite.sw - scale * 0.36;
             }
         }
         currentH += tileH;
@@ -302,7 +302,7 @@ export function drawDetails() {
             const detail = sceneDetails[key];
             const drawY = detailsPosY + currentH - detail.sh;
             ctx.drawImage(sheet, detail.x, detail.y, detail.w, detail.h, currentW, drawY, detail.sw, detail.sh);
-            currentW += detail.sw - 1;
+            currentW += detail.sw - scale * 0.36;
         }
         currentH += tileH;
     }
