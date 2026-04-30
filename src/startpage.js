@@ -78,6 +78,20 @@ export function drawPanel() {
         panelOutline.x, panelOutline.y, panelOutline.w, panelOutline.h,
         ox, oy, panelOutline.w * scale, panelOutline.h * scale
     );
+
+    const cx = ox + (panelOutline.w * scale) / 2 + scale * 5;
+
+
+    ctx.font = `${Math.round(15 * scale)}px PixelFont`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.strokeStyle = "#7B3F00";
+    ctx.lineWidth = 1 * scale;
+    ctx.strokeText("REDLINE ", cx, oy + scale * 4);
+
+    ctx.fillStyle = "#E8420A";
+    ctx.fillText("REDLINE ", cx, oy + scale * 4);
 }
 
 export function drawButtons() {
@@ -181,6 +195,11 @@ export function drawTitle(title, ox, oy, panelOutline) {
     ctx.font = `${Math.round(18 * scale)}px PixelFont`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
+
+    ctx.strokeStyle = "#d8b4fd";
+    ctx.lineWidth = 1 * scale;
+    ctx.strokeText(title, ox + (panelOutline.w * scale) / 2, oy + scale * 4);
+
     ctx.fillStyle = "black";
     ctx.fillText(title, ox + (panelOutline.w * scale) / 2, oy + scale * 4);
 }
@@ -445,7 +464,7 @@ export function howToPlay(ox, oy, panelOutline) {
     const sections = [
         {
             title: "Controls",
-            color: "#FFD700",
+            color: "#FFE500",
             items: [
                 "↑ / W      Accelerate",
                 "↓ / S      Brake",
@@ -456,7 +475,7 @@ export function howToPlay(ox, oy, panelOutline) {
         },
         {
             title: "Obstacles",
-            color: "#FF6B6B",
+            color: "#FF2A2A",
             items: [
                 "Dodge Cones, Barricades & Potholes",
                 "Each hit costs you a Heart"
@@ -464,7 +483,7 @@ export function howToPlay(ox, oy, panelOutline) {
         },
         {
             title: "Fuel",
-            color: "#6BFF9E",
+            color: "#00FF5E",
             items: [
                 "Pull into Gas Station to refuel",
                 "Going Offroad drains fuel faster",
@@ -473,7 +492,7 @@ export function howToPlay(ox, oy, panelOutline) {
         },
         {
             title: "Health",
-            color: "#FF9E6B",
+            color: "#FF6A00",
             items: [
                 "You have 3 Hearts",
                 "Offroad too long loses a Heart",
@@ -482,9 +501,41 @@ export function howToPlay(ox, oy, panelOutline) {
         }
     ]
 
-    const titleSize = Math.round(10 * scale);
+    const titleSize = Math.round(18 * scale);
     const itemSize = Math.round(8 * scale);
     const titleGap = scale * 14;
     const itemGap = scale * 10;
     const sectionGap = scale * 6;
+
+    let totalH = 0;
+    for (const s of sections) {
+        totalH += titleGap + s.items.length * itemGap + sectionGap;
+    }
+
+    let currentY = oy + ph / 2 - totalH / 2;
+    const leftPadding = ox + scale * 12;
+
+    for (const section of sections) {
+        ctx.font = `${titleSize}px PixelFont`;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 1 * scale;
+        ctx.strokeText(`${section.title}`, leftPadding, currentY);
+
+        ctx.fillStyle = section.color;
+        ctx.fillText(`${section.title}`, leftPadding, currentY);
+        currentY += titleGap;
+
+        ctx.font = `${itemSize}px PixelFont`;
+        ctx.fillStyle = "black";
+        for (const item of section.items) {
+            ctx.fillText(item, leftPadding, currentY);
+            currentY += itemGap;
+        }
+
+        currentY += sectionGap;
+
+    }
 }
