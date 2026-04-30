@@ -3,9 +3,11 @@ import { gameLoop, initPlayer, resetPlayer } from "./character.js";
 import { resetHealth } from "./health.js";
 import { initRoadPos, initSheet, resetScene } from "./scene.js";
 import { startBgMusic, startEngine } from "./sound.js";
-import { scale } from "./SpriteCoordinates.js";
 import { activeCar, activeScenes, clearIsActiveButton, isActiveButton, isClickOnCar, isClickOnCloseButton, isClickOnColorButton, isClickOnGuideButton, isClickOnScene, isClickOnSceneButton, isClickOnStartButton, pos, startPage, startPageLoop, stopStartPageLoop } from "./startpage.js";
 import { initPlayerIconSheet } from "./ui.js";
+
+const PixelFont = new FontFace("PixelFont", "url(assets/Text/04B_03__.TTF)");
+PixelFont.load().then(f => { document.fonts.add(f); onImageLoad(); });
 
 export const canvas = document.getElementById("game-canvas");
 export const ctx = canvas.getContext("2d");
@@ -130,6 +132,9 @@ buttonsSpriteSheet.src = "assets/UI/Race_progress.png";
 export const gameOverSpriteSheet = new Image();
 gameOverSpriteSheet.src = "assets/UI/Game_over.png";
 
+export const guiSpriteSheet = new Image();
+guiSpriteSheet.src = "assets/UI/SpriteSheet.png";
+
 export const keys = {
     up: false,
     right: false,
@@ -138,19 +143,49 @@ export const keys = {
     shift: false,
 };
 
+const PIXEL_SIZE = 3;
+const SCALE_FACTOR = 0.5;
+
+export let scale = PIXEL_SIZE;
+export let nativeWidth = 320;
+export let nativeHeight = 220;
+
 function resizeCanvas() {
     const dpr = window.devicePixelRatio || 1;
 
-    canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
+    // const rawScale = Math.min(
+    //     window.innerWidth / 320,
+    //     window.innerHeight / 180
+    // ) * SCALE_FACTOR;
 
-    canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
+    scale = Math.max(1, Math.round(Math.min(
+        window.innerWidth / 320,
+        window.innerHeight / 220
+    ) * SCALE_FACTOR));
 
-    ctx.scale(dpr, dpr);
+    // scale = Math.max(1, rawScale % 1 >= 0.65
+    //     ? Math.ceil(rawScale)
+    //     : Math.floor(rawScale)
+    // );
 
+    nativeWidth = Math.floor(window.innerWidth / scale);
+    nativeHeight = Math.floor(window.innerHeight / scale);
+
+    const cssW = nativeWidth * scale;
+    const cssH = nativeHeight * scale;
+
+    canvas.width = Math.floor(cssW * dpr);
+    canvas.height = Math.floor(cssH * dpr);
+
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
+    canvas.style.position = 'absolute';
+    canvas.style.left = Math.floor((window.innerWidth - cssW) / 2) + 'px';
+    canvas.style.top = Math.floor((window.innerHeight - cssH) / 2) + 'px';
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.imageSmoothingEnabled = false;
-};
+}
 
 export function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -161,7 +196,7 @@ window.addEventListener("resize", () => {
 });
 
 let loadedCount = 0;
-const imageCount = 39;
+const imageCount = 41;
 
 function onImageLoad() {
     loadedCount++;
@@ -256,15 +291,15 @@ document.addEventListener("click", (e) => {
         requestAnimationFrame(gameLoop);
     }
     if (isClickOnSceneButton(mousePos.x, mousePos.y) && !isGameRunning && !isDead) {
-        isActiveButton[0] = "scene";
+        isActiveButton[0] = "Scene";
         return;
     }
     if (isClickOnColorButton(mousePos.x, mousePos.y) && !isGameRunning && !isDead) {
-        isActiveButton[0] = "cars";
+        isActiveButton[0] = "Cars";
         return;
     }
     if (isClickOnGuideButton(mousePos.x, mousePos.y) && !isGameRunning && !isDead) {
-        isActiveButton[0] = "guide";
+        isActiveButton[0] = "Guide";
         return;
     }
     if (isClickOnCar(mousePos.x, mousePos.y) && !isGameRunning && !isDead) {
@@ -327,3 +362,4 @@ obstaclesSpriteSheet.onload = onImageLoad;
 stationMarkingSpriteSheet.onload = onImageLoad;
 buttonsSpriteSheet.onload = onImageLoad;
 gameOverSpriteSheet.onload = onImageLoad;
+guiSpriteSheet.onload = onImageLoad;

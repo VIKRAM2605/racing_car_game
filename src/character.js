@@ -1,7 +1,7 @@
 import { drawCars, spawnCars, updateCars } from "./car.js";
 import { checkCollision, currentInvinsibleTime, isInvinsible } from "./collision.js";
 import { deductHealth } from "./health.js";
-import { canvas, ctx, isDead, keys, playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4, resetAll, resetIsDead, resetIsGameRunning, setIsDead } from "./main.js";
+import { canvas, ctx, isDead, keys, nativeHeight, nativeWidth, playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4, resetAll, resetIsDead, resetIsGameRunning, scale, setIsDead } from "./main.js";
 import { drawObstacles, drawScene, fuelStationMapForRefill, getRoadBelowPlayer, isPlayerOnTopOfRefillBox, posX, randomSceneGeneration, roads, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
 import { stopEngine, updateEngineSound } from "./sound.js";
 import { player1Sprite, player2Sprite, player3Sprite, player4Sprite, summer } from "./SpriteCoordinates.js";
@@ -52,8 +52,8 @@ export function initPlayer() {
     defaultPlayerSheet = playerSpriteSheet1;
     playerSprite = player1Sprite;
 
-    player.x = canvas.width / window.devicePixelRatio / 2 - (summer["road"].sw) / 2 + playerSprite["up"].sw + 22;
-    player.y = canvas.height / window.devicePixelRatio / 2 + 100;
+    player.x = (nativeWidth * scale) / 2 - (summer["road"].w * scale) / 2 + playerSprite["up"].w * scale + 10 * scale;
+    player.y = (nativeHeight * scale) / 2 + 50 * scale;
     playerSheet = [playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4];
 };
 
@@ -68,7 +68,7 @@ export function changeDefaultPlayer(key) {
 export function resetPlayer() {
     player.speed = 100;
     player.fuel = 1;
-    player.x = canvas.width / window.devicePixelRatio / 2 - (summer["road"].sw) / 2 + playerSprite["up"].sw + 22;
+    player.x = (nativeWidth * scale) / 2 - (summer["road"].w * scale) / 2 + playerSprite["up"].w * scale + 10 * scale;
     player.currentFacing = "up";
     currentIsDeadTimer = 0;
 }
@@ -160,9 +160,9 @@ export function updatePlayer(delta) {
         if (steeringAngle < 0) steeringAngle = Math.min(steeringAngle + steerReturn * delta, 0);
     }
     const road = getRoadBelowPlayer();
-    const roadRight = posX + road.sw;
+    const roadRight = posX + road.w * scale;
 
-    if (player.x <= posX || player.x + playerSprite[player.currentFacing].sw >= roadRight) {
+    if (player.x <= posX || player.x + playerSprite[player.currentFacing].w * scale >= roadRight) {
         currentOffRoadTime += delta;
         if (currentOffRoadTime >= maxOffRoadTime) {
             currentOffRoadTime -= maxOffRoadTime;
@@ -194,8 +194,8 @@ export function drawPlayer() {
     ctx.imageSmoothingEnabled = false;
 
     const pos = playerSprite[player.currentFacing];
-    const cx = player.x + pos.sw / 2;
-    const cy = player.y + pos.sh / 2;
+    const cx = player.x + (pos.w * scale) / 2;
+    const cy = player.y + (pos.h * scale) / 2;
 
     ctx.save();
     ctx.translate(cx, cy);
@@ -203,17 +203,19 @@ export function drawPlayer() {
     ctx.drawImage(
         defaultPlayerSheet,
         pos.x, pos.y, pos.w, pos.h,
-        -pos.sw / 2, -pos.sh / 2, pos.sw, pos.sh
+        -(pos.w * scale) / 2, -(pos.h * scale) / 2, pos.w * scale, pos.h * scale
     );
     ctx.restore();
 
-    player.w = pos.sw;
-    player.h = pos.sh;
+    player.w = pos.w * scale;
+    player.h = pos.h * scale;
 };
 
 export function gameLoop(currentTime) {
+    const dpr = window.devicePixelRatio || 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, nativeWidth * scale, nativeHeight * scale);
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     let delta = (currentTime - lastTime) / 1000;
     if (delta > 0.1) delta = 0.1;
 

@@ -18,6 +18,7 @@
  - The game offers collison detecting using SAT algorithm.
  - Gas station to refill your gas tank.
  - Health system with Invinsibility frames after taking damage.
+ - When Selecting 2+ scenes it will randomly spawns them across the Start Page and in-game.
 
 ## Tech Stack
 - JavaScript(Vanilla)

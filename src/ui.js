@@ -1,7 +1,7 @@
 import { player, playerSprite } from "./character.js";
 import { health } from "./health.js";
-import { canvas, carrotSpriteSheet, cherrySpriteSheet, ctx, damageSpriteSheet, fuelBarSpriteSheet, fullSpriteSheet, gameOverSpriteSheet, isDead, lemonSpriteSheet, numbersSpriteSheet, playerIndicatorSpriteSheet, randomInt, slimeSpriteSheet } from "./main.js";
-import { damageSprite, gameOverSprite, numbers, playerIcons, scale, ui } from "./SpriteCoordinates.js";
+import { canvas, carrotSpriteSheet, cherrySpriteSheet, ctx, damageSpriteSheet, fuelBarSpriteSheet, fullSpriteSheet, gameOverSpriteSheet, isDead, lemonSpriteSheet, numbersSpriteSheet, playerIndicatorSpriteSheet, randomInt, scale, slimeSpriteSheet } from "./main.js";
+import { damageSprite, gameOverSprite, numbers, playerIcons, ui } from "./SpriteCoordinates.js";
 
 export let currentPlayerIcon = "lemon";
 
