@@ -17,7 +17,7 @@ export let isActiveButton = [];
 export let activeScenes = ["summer"];
 export let scenesPos = {};
 
-const buttons = ["Start", "Scene", "Cars", "Guide"];
+const buttons = ["Start", "Scene", "Cars", "Guide", "Score"];
 
 export function startPage() {
     animationId = requestAnimationFrame(startPageLoop);
@@ -103,6 +103,89 @@ export function drawPanel() {
     ctx.fillStyle = "#FFE500";
     ctx.fillText(`BEST: ${bestScore}`, cx - scale * 5, oy + scale * 40);
 }
+
+export function aboutScore(ox, oy, panelOutline) {
+    const cx = ox + (panelOutline.w * scale) / 2;
+    const ph = panelOutline.h * scale;
+
+    const sections = [
+        {
+            title: "How Score Works",
+            color: "#FFE500",
+            items: [
+                "Score increases as you drive faster",
+                "Higher speed = more points per second",
+                "Slow down and you earn less"
+            ]
+        },
+        {
+            title: "Bonus Points",
+            color: "#00FF5E",
+            items: [
+                "Refuel at a Gas Station — +500 pts",
+                "Bonus Can be Triggered When fuel meter < 30%",
+                "Bonus only triggers once per station",
+                "Plan your route to hit every station"
+            ]
+        },
+        {
+            title: "Best Score",
+            color: "#FF6A00",
+            items: [
+                "Your best run is saved locally",
+                "Shown on the main panel",
+                "Beat it every run to improve"
+            ]
+        },
+        {
+            title: "Game Over",
+            color: "#FF2A2A",
+            items: [
+                "Score resets on every new run",
+                "Best score is saved automatically",
+                "Survive longer to score higher"
+            ]
+        }
+    ];
+
+    const titleSize = Math.round(18 * scale);
+    const itemSize = Math.round(8 * scale);
+    const titleGap = scale * 14;
+    const itemGap = scale * 10;
+    const sectionGap = scale * 6;
+
+    let totalH = 0;
+    for (const s of sections) {
+        totalH += titleGap + s.items.length * itemGap + sectionGap;
+    }
+
+    let currentY = oy + ph / 2 - totalH / 2;
+    const leftPadding = ox + scale * 12;
+
+    for (const section of sections) {
+        ctx.font = `${titleSize}px PixelFont`;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 1 * scale;
+        ctx.strokeText(`${section.title}`, leftPadding, currentY);
+
+        ctx.fillStyle = section.color;
+        ctx.fillText(`${section.title}`, leftPadding, currentY);
+        currentY += titleGap;
+
+        ctx.font = `${itemSize}px PixelFont`;
+        ctx.fillStyle = "black";
+        for (const item of section.items) {
+            ctx.fillText(item, leftPadding, currentY);
+            currentY += itemGap;
+        }
+
+        currentY += sectionGap;
+    }
+}
+
 
 export function drawButtons() {
     const panel = guiSprites['panel'];
@@ -198,6 +281,9 @@ export function drawPanelForMenuButtons() {
     else if (isActiveButton[0] === "Guide") {
         howToPlay(ox, oy, panelOutline);
     }
+    else if (isActiveButton[0] === "Score") {
+        aboutScore(ox, oy, panelOutline);
+    }
 
 }
 
@@ -232,6 +318,16 @@ export function isClickOnSceneButton(x, y) {
         y >= pos["Scene"].y &&
         y <= pos["Scene"].y + pos["Scene"].h
     )
+};
+
+export function isClickOnScoreButton(x, y) {
+    if (isActiveButton[0]) return false;
+    return (
+        x >= pos["Score"].x &&
+        x <= pos["Score"].x + pos["Score"].w &&
+        y >= pos["Score"].y &&
+        y <= pos["Score"].y + pos["Score"].h
+    );
 };
 
 export function isClickOnColorButton(x, y) {

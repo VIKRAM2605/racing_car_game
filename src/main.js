@@ -3,7 +3,7 @@ import { gameLoop, initPlayer, resetPlayer } from "./character.js";
 import { resetHealth } from "./health.js";
 import { initRoadPos, initSheet, resetScene } from "./scene.js";
 import { startBgMusic, startEngine } from "./sound.js";
-import { activeCar, activeScenes, clearIsActiveButton, isActiveButton, isClickOnCar, isClickOnCloseButton, isClickOnColorButton, isClickOnGuideButton, isClickOnScene, isClickOnSceneButton, isClickOnStartButton, pos, startPage, startPageLoop, stopStartPageLoop } from "./startpage.js";
+import { activeCar, activeScenes, clearIsActiveButton, isActiveButton, isClickOnCar, isClickOnCloseButton, isClickOnColorButton, isClickOnGuideButton, isClickOnScene, isClickOnSceneButton, isClickOnScoreButton, isClickOnStartButton, pos, startPage, startPageLoop, stopStartPageLoop } from "./startpage.js";
 import { initPlayerIconSheet } from "./ui.js";
 
 const PixelFont = new FontFace("PixelFont", "url(assets/Text/04B_03__.TTF)");
@@ -302,12 +302,17 @@ document.addEventListener("click", (e) => {
         isActiveButton[0] = "Guide";
         return;
     }
+    if (isClickOnScoreButton(mousePos.x, mousePos.y) && !isGameRunning && !isDead) {
+        isActiveButton[0] = "Score";
+        return;
+    }
     if (isClickOnCar(mousePos.x, mousePos.y) && !isGameRunning && !isDead) {
         return;
     }
     if (isClickOnScene(mousePos.x, mousePos.y) && !isGameRunning && !isDead) {
         return;
     }
+    
     if (isClickOnCloseButton(mousePos.x, mousePos.y) && !isGameRunning && !isDead) {
         clearIsActiveButton();
         return;

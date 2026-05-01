@@ -119,7 +119,6 @@ export function drawSpeed() {
         currentX += (sprite.w * uiScale - 1);
     }
 };
-
 export function drawFuelBar() {
     const screenW = canvas.width / window.devicePixelRatio;
     const screenH = canvas.height / window.devicePixelRatio;
