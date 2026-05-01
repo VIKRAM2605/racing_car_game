@@ -49,6 +49,18 @@ export let sceneSpriteSheetMap;
 export let posX, posY, detailsPosY = 0;
 export let sceneNeedY, sceneNeedX;
 
+export const scene = ["summer"];
+export let roads = [];
+export let detailsForLeft = [];
+export let detailsForRight = [];
+export let obstacles = [];
+export let gasStationObstacles = [];
+export let roadMarkings = [];
+export const spawnObstacleTime = 2;
+export let currentSpawnObstacleTime = 0;
+export let refillZones = [];
+export let gasStationMarking = [];
+
 export function initSheet() {
     sceneSpriteSheetMap = {
         "summer": {
@@ -94,17 +106,8 @@ export function initRoadPos() {
     sceneNeedX = Math.ceil(((screenW / 2 - (road.w * scale) / 2) * 3) / (detailsMap[currentScene]["details1"].w * scale)) + 2;
 
     for (let i = 0; i < sceneNeedY; i++) {
-        detailsForLeft[i] = [];
-        for (let j = 0; j < sceneNeedX; j++) {
-            detailsForLeft[i][j] = randomDetailsGeneration();
-        }
-    }
-
-    for (let i = 0; i < sceneNeedY; i++) {
-        detailsForRight[i] = [];
-        for (let j = 0; j < sceneNeedX; j++) {
-            detailsForRight[i][j] = randomDetailsGeneration();
-        }
+        detailsForLeft.push(generateDetailRowLeft(currentScene));
+        detailsForRight.push(generateDetailRowRight(currentScene));
     }
 
     const rightLaneCenter = posX + road.w * 0.67 * scale;
@@ -139,18 +142,6 @@ export function resetScene() {
     screenW = canvas.width / window.devicePixelRatio;
 };
 
-export const scene = ["summer"];
-export let roads = [];
-export let detailsForLeft = [];
-export let detailsForRight = [];
-export let obstacles = [];
-export let gasStationObstacles = [];
-export let roadMarkings = [];
-export const spawnObstacleTime = 2;
-export let currentSpawnObstacleTime = 0;
-export let refillZones = [];
-export let gasStationMarking = [];
-
 export function randomSceneGeneration(delta) {
     currentTime += delta;
     if (currentTime > nextSceneSpawnTime) {
@@ -174,14 +165,62 @@ export function randomDetailsGeneration() {
     return "details" + randomInt(1, 5).toString();
 };
 
+export function generateDetailRowLeft(scene) {
+    const tiles = [];
+    let currentX = 0;
+    const overlap = scale * 0.36;
+    const sceneDetails = detailsMap[scene];
+
+    let safe = 0;
+    while (currentX < posX && safe < 50) {
+        safe++;
+        let key = randomDetailsGeneration();
+        let detail = sceneDetails[key];
+
+        if (currentX + detail.w * scale - overlap > posX) {
+            key = "details3";
+            detail = sceneDetails[key];
+        }
+
+        tiles.push({ key, x: currentX });
+        currentX += detail.w * scale - overlap;
+    }
+
+    return { scene, tiles };
+
+}
+
+export function generateDetailRowRight(scene) {
+    const tiles = [];
+    const rightEdge = posX + summer["road"].w * scale;
+    let currentX = rightEdge;
+    const overlap = scale * 0.36;
+    const sceneDetails = detailsMap[scene];
+
+    let safe = 0;
+    while (currentX < screenW + (200 * scale) && safe < 50) {
+        safe++;
+        let key = randomDetailsGeneration();
+        let detail = sceneDetails[key];
+
+        tiles.push({ key, x: currentX });
+        currentX += detail.w * scale - overlap;
+    }
+    return { scene, tiles };
+}
+
 export function updateRoad(delta) {
     if (!roads.length) return;
     posY += delta * (player.speed + 200);
-    const road = summer[roads[0]];
+
+    const road = summer[roads[0].id];
     if (posY >= screenH + road.h * scale) {
-        roads.shift();
-        totalRoadH -= road.stackHeight * scale;
-        posY -= road.stackHeight * scale;
+
+        const poppedRoads = roads.shift();
+        const poppedHeight = summer[poppedRoads.id];
+
+        totalRoadH -= poppedHeight.stackHeight * scale;
+        posY -= poppedHeight.stackHeight * scale;
     }
     refillRoads();
 };
@@ -189,25 +228,33 @@ export function updateRoad(delta) {
 export function updateDetails(delta) {
     detailsPosY += delta * (player.speed + 200);
     const detailH = detailsMap[currentScene]["details1"].h * scale;
+
     if (detailsPosY >= detailH) {
         detailsPosY -= detailH;
+
         detailsForLeft.pop();
         detailsForRight.pop();
-        const newRowLeft = [];
-        const newRowRight = [];
-        for (let i = 0; i < sceneNeedX; i++) {
-            newRowLeft.push(randomDetailsGeneration());
-            newRowRight.push(randomDetailsGeneration());
-        };
-        detailsForLeft.unshift(newRowLeft);
-        detailsForRight.unshift(newRowRight);
+
+        detailsForLeft.unshift(generateDetailRowLeft(currentScene));
+        detailsForRight.unshift(generateDetailRowRight(currentScene));
     }
 };
 
 export function updateObstacles(delta) {
+
+    const roadSpeed = player.speed + 200;
+
     for (let i = obstacles.length - 1; i >= 0; i--) {
-        obstacles[i].y += delta * (player.speed + 200);
+        obstacles[i].y += delta * roadSpeed;
         if (obstacles[i].y >= 3000) obstacles.splice(i, 1);
+    }
+
+    for (let i = gasStationObstacles.length - 1; i >= 0; i--) {
+        gasStationObstacles[i].y += delta * roadSpeed;
+    }
+
+    for (let i = refillZones.length - 1; i >= 0; i--) {
+        refillZones[i].y += delta * roadSpeed;
     }
 };
 
@@ -218,10 +265,11 @@ export function refillRoads() {
             roadsSinceLastBunk = 0;
             roadsUntilNextBunk = Math.min(roadsUntilNextBunk + bunkSpacingIncrease, 60);
             bunkSpacingIncrease += 5;
-            roads.push("gasStation");
+
+            roads.push({ id: "gasStation", scene: currentScene, obstacleSpawned: false });
             totalRoadH += summer["gasStation"].stackHeight * scale;
         } else {
-            roads.push("road");
+            roads.push({ id: "road", scene: currentScene });
             totalRoadH += summer["road"].stackHeight * scale;
         }
     }
@@ -234,101 +282,132 @@ export function drawScene() {
 };
 
 export function drawRoad() {
-    const sceneSheet = sceneSpriteSheetMap[currentScene];
     const positions = [];
     let currentY = posY;
+
     for (let i = 0; i < roads.length; i++) {
         positions.push(currentY);
-        currentY -= summer[roads[i]].stackHeight * scale;
+        currentY -= summer[roads[i].id].stackHeight * scale;
     }
+
     for (let i = roads.length - 1; i >= 0; i--) {
-        const road = summer[roads[i]];
-        const sheet = sceneSheet[roads[i]];
-        const drawY = positions[i] - (road.h * scale - road.stackHeight * scale);
-        ctx.drawImage(sheet, road.x, road.y, road.w, road.h, Math.floor(posX), Math.floor(drawY) , Math.ceil(road.w * scale), Math.ceil(road.h * scale));
-        if (roads[i + 1] === "gasStation") {
+
+        const roadObj = roads[i];
+        const roadCoords = summer[roadObj.id];
+        const sheet = sceneSpriteSheetMap[roadObj.scene][roadObj.id];
+
+        const drawY = positions[i] - (roadCoords.h * scale - roadCoords.stackHeight * scale);
+
+        ctx.drawImage(
+            sheet,
+            roadCoords.x, roadCoords.y, roadCoords.w, roadCoords.h,
+            Math.floor(posX), Math.floor(drawY), Math.ceil(roadCoords.w * scale), Math.ceil(roadCoords.h * scale)
+        );
+
+        if (roads[i + 1]?.id === "gasStation") {
             drawArrowToStation(drawY);
-            drawStationObtacles(drawY);
+            if (!roads[i + 1].obstacleSpawned) {
+                spawnGasStationObstacles(drawY);
+                roads[i + 1].obstacleSpawned = true;
+            }
+
+            drawStationObtacles();
         }
-        if (roads[i + 3] === "gasStation") drawPetrolPumpMarking("30", drawY);
-        if (roads[i + 6] === "gasStation") drawPetrolPumpMarking("60", drawY);
+        if (roads[i + 3]?.id === "gasStation") drawPetrolPumpMarking("30", drawY);
+        if (roads[i + 6]?.id === "gasStation") drawPetrolPumpMarking("60", drawY);
     }
 };
 
 export function drawDetails() {
-    const sceneDetails = detailsMap[currentScene];
-    const sceneSheets = sceneSpriteSheetMap[currentScene];
-    const leftEdge = posX;
-    const rightEdge = posX + summer["road"].w * scale;
-    const tileH = sceneDetails["details1"].h * scale - scale * 0.36;
-    let currentH = 0;
+    const tileH = detailsMap["summer"]["details1"].h * scale - scale * 0.36;
 
+    let currentH = 0;
     for (let i = 0; i < detailsForLeft.length; i++) {
-        let currentW = 0;
-        for (let j = 0; j < detailsForLeft[0].length; j++) {
-            const key = detailsForLeft[i][j];
-            const sheet = sceneSheets[key];
-            const detail = sceneDetails[key];
+        const row = detailsForLeft[i];
+        const sceneDetails = detailsMap[row.scene];
+        const sceneSheets = sceneSpriteSheetMap[row.scene];
+
+        for (let j = 0; j < row.tiles.length; j++) {
+            const tile = row.tiles[j];
+            const detail = sceneDetails[tile.key];
+            const sheet = sceneSheets[tile.key];
             const drawY = detailsPosY + currentH - detail.h * scale;
-            if (currentW < leftEdge - detail.w * scale) {
-                ctx.drawImage(sheet, detail.x, detail.y, detail.w, detail.h, currentW, drawY, detail.w * scale, detail.h * scale);
-                currentW += detail.w * scale - scale * 0.36;
-            } else if (currentW < leftEdge) {
-                const sprite = sceneDetails["details3"];
-                ctx.drawImage(sheet, sprite.x, sprite.y, sprite.w, sprite.h, currentW, drawY, sprite.w * scale, sprite.h * scale);
-                currentW += sprite.w * scale - scale * 0.36;
-            }
+
+            ctx.drawImage(
+                sheet,
+                detail.x, detail.y, detail.w, detail.h,
+                tile.x, drawY, detail.w * scale, detail.h * scale
+            );
         }
+
         currentH += tileH;
     }
 
     currentH = 0;
     for (let i = 0; i < detailsForRight.length; i++) {
-        let currentW = rightEdge;
-        for (let j = 0; j < detailsForRight[0].length; j++) {
-            const key = detailsForRight[i][j];
-            const sheet = sceneSheets[key];
-            const detail = sceneDetails[key];
+        const row = detailsForRight[i];
+        const sceneDetails = detailsMap[row.scene];
+        const sceneSheets = sceneSpriteSheetMap[row.scene];
+
+        for (let j = 0; j < row.tiles.length; j++) {
+            const tile = row.tiles[j];
+            const detail = sceneDetails[tile.key];
+            const sheet = sceneSheets[tile.key];
             const drawY = detailsPosY + currentH - detail.h * scale;
-            ctx.drawImage(sheet, detail.x, detail.y, detail.w, detail.h, currentW, drawY, detail.w * scale, detail.h * scale);
-            currentW += detail.w * scale - scale * 0.36;
+
+            ctx.drawImage(
+                sheet,
+                detail.x, detail.y, detail.w, detail.h,
+                tile.x, drawY, detail.w * scale, detail.h * scale
+            );
+
         }
         currentH += tileH;
     }
+
 };
 
 export function getRoadBelowPlayer() {
     let currentY = posY;
     for (let i = 0; i < roads.length; i++) {
-        const road = summer[roads[i]];
+
+        const roadObj = roads[i];
+        const road = summer[roadObj.id];
         const visualOffset = road.h * scale - road.stackHeight * scale;
         const roadTop = currentY - road.stackHeight * scale - visualOffset;
         const roadBottom = currentY;
+
         if (player.y >= roadTop && player.y <= roadBottom) return road;
         currentY -= road.stackHeight * scale;
     }
     return summer["road"];
 };
 
-export function spawnGasStationObstacles() {
+export function spawnGasStationObstacles(y) {
     gasStationObstacles.push({
         x: posX + summer["road"].w * scale - roadObstackleSprites["cone"].w * scale - scale * 4,
+        y: y - roadObstackleSprites["cone"].h * scale * 18,
         sprite: "cone", isDeadly: true,
         w: roadObstackleSprites["cone"].w * scale, h: roadObstackleSprites["cone"].h * scale, currentFacing: "up"
     });
     gasStationObstacles.push({
         x: posX + summer["road"].w * scale + roadObstackleSprites["cone"].w * scale - scale * 3,
+        y: y - roadObstackleSprites["cone"].h * scale * 18,
         sprite: "cone", isDeadly: true,
         w: roadObstackleSprites["cone"].w * scale, h: roadObstackleSprites["cone"].h * scale, currentFacing: "up"
     });
     gasStationObstacles.push({
         x: posX + summer["road"].w * scale - roadObstackleSprites["barricade"].w * scale + scale * 2,
+        y: y - roadObstackleSprites["barricade"].h * scale * 18,
         sprite: "barricade", isDeadly: true,
         w: roadObstackleSprites["barricade"].w * scale, h: roadObstackleSprites["barricade"].h * scale, currentFacing: "up"
     });
+
     refillZones.push({
         x: posX + summer["road"].w * scale + scale * 10,
-        y: null, w: scale * 50, h: scale * 50
+        y: y - scale * 190,
+        w: scale * 50,
+        h: scale * 50
     });
 };
 
@@ -365,19 +444,25 @@ export function drawObstacles() {
     for (let i = 0; i < obstacles.length; i++) {
         const obs = obstacles[i];
         const sprite = roadObstackleSprites[obs.sprite];
-        ctx.drawImage(obstaclesSpriteSheet, sprite.x, sprite.y, sprite.w, sprite.h, obs.x, obs.y, sprite.w * scale, sprite.h * scale);
+        ctx.drawImage(
+            obstaclesSpriteSheet,
+            sprite.x, sprite.y, sprite.w, sprite.h,
+            obs.x, obs.y, sprite.w * scale, sprite.h * scale
+        );
     }
 };
 
-export function drawStationObtacles(y) {
+export function drawStationObtacles() {
     for (let i = 0; i < gasStationObstacles.length; i++) {
         const obs = gasStationObstacles[i];
         const sprite = roadObstackleSprites[obs.sprite];
-        ctx.drawImage(obstaclesSpriteSheet, sprite.x, sprite.y, sprite.w, sprite.h, obs.x, y - sprite.h * scale * 18, sprite.w * scale, sprite.h * scale);
-        obs.y = y - sprite.h * scale * 18;
-    }
-    for (let i = 0; i < refillZones.length; i++) {
-        refillZones[i].y = y - scale * 190;
+
+        ctx.drawImage(
+            obstaclesSpriteSheet,
+            sprite.x, sprite.y, sprite.w, sprite.h,
+            obs.x, obs.y, sprite.w * scale, sprite.h * scale
+        );
+
     }
 };
 
@@ -385,14 +470,26 @@ export function drawPetrolPumpMarking(distance, y) {
     const arrowObj = gasStationMarking[0];
     const pumpObj = gasStationMarking[1];
 
-    ctx.drawImage(stationMarkingSpriteSheet, pumpObj.sprite.x, pumpObj.sprite.y, pumpObj.sprite.w, pumpObj.sprite.h, pumpObj.x, y, pumpObj.sprite.w * scale, pumpObj.sprite.h * scale);
-    ctx.drawImage(stationMarkingSpriteSheet, arrowObj.sprite.x, arrowObj.sprite.y, arrowObj.sprite.w, arrowObj.sprite.h, arrowObj.x, y, arrowObj.sprite.w * scale, arrowObj.sprite.h * scale);
+    ctx.drawImage(
+        stationMarkingSpriteSheet,
+        pumpObj.sprite.x, pumpObj.sprite.y, pumpObj.sprite.w, pumpObj.sprite.h,
+        pumpObj.x, y, pumpObj.sprite.w * scale, pumpObj.sprite.h * scale
+    );
+    ctx.drawImage(
+        stationMarkingSpriteSheet,
+        arrowObj.sprite.x, arrowObj.sprite.y, arrowObj.sprite.w, arrowObj.sprite.h,
+        arrowObj.x, y, arrowObj.sprite.w * scale, arrowObj.sprite.h * scale
+    );
 
     const distanceY = y + Math.max(pumpObj.sprite.h * scale, arrowObj.sprite.h * scale) + scale * 5;
     for (let i = 2; i < 4; i++) {
         const obj = gasStationMarking[i];
         if (distance === obj.key) {
-            ctx.drawImage(stationMarkingSpriteSheet, obj.sprite.x, obj.sprite.y, obj.sprite.w, obj.sprite.h, obj.x, distanceY, obj.sprite.w * scale, obj.sprite.h * scale);
+            ctx.drawImage(
+                stationMarkingSpriteSheet,
+                obj.sprite.x, obj.sprite.y, obj.sprite.w, obj.sprite.h,
+                obj.x, distanceY, obj.sprite.w * scale, obj.sprite.h * scale
+            );
         }
     }
 };
@@ -400,12 +497,21 @@ export function drawPetrolPumpMarking(distance, y) {
 export function drawArrowToStation(y) {
     const sprite = stationMarking["arrowRight"];
     const rightLaneCenter = posX + summer["road"].w * scale * 0.75;
-    ctx.drawImage(stationMarkingSpriteSheet, sprite.x, sprite.y, sprite.w, sprite.h, rightLaneCenter + (sprite.w * scale) / 2, y - sprite.h * scale * 7, sprite.w * scale, sprite.h * scale);
+    ctx.drawImage(
+        stationMarkingSpriteSheet,
+        sprite.x, sprite.y, sprite.w, sprite.h,
+        rightLaneCenter + (sprite.w * scale) / 2, y - sprite.h * scale * 7, sprite.w * scale, sprite.h * scale
+    );
 };
 
 export function fuelStationMapForRefill() {
+
     for (let i = refillZones.length - 1; i >= 0; i--) {
         if (refillZones[i].y !== null && refillZones[i].y >= 3000) refillZones.splice(i, 1);
+    }
+
+    for (let i = gasStationObstacles.length - 1; i >= 0; i--) {
+        if (gasStationObstacles[i].y !== null && gasStationObstacles[i].y >= 3000) gasStationObstacles.splice(i, 1);
     }
 };
 
