@@ -3,6 +3,7 @@ import { drawCars, spawnCars, updateCars } from "./car.js";
 import { changeDefaultPlayer } from "./character.js";
 import { buttonsSpriteSheet, canvas, ctx, desertDetailsSpriteSheet, desertRoadSpriteSheet, guiSpriteSheet, nativeHeight, nativeWidth, npcSpriteSheet, playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4, scale, summerDetailsSpriteSheet, summerRoadSpriteSheet, winterDetailsSpriteSheet, winterRoadSpriteSheet } from "./main.js";
 import { addScene, drawObstacles, drawScene, posX, posY, randomSceneGeneration, removeScene, scene, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
+import { bestScore } from "./score.js";
 import { closeButtonSprite, desert, desertDetails, guiSprites, npc1Sprite, npc2Sprite, npc3Sprite, player1Sprite, player2Sprite, player3Sprite, player4Sprite, selectedButtonSprite, summer, summerDetails, winter, winterDetails } from "./SpriteCoordinates.js";
 
 let animationId = null;
@@ -91,6 +92,16 @@ export function drawPanel() {
 
     ctx.fillStyle = "#E8420A";
     ctx.fillText("REDLINE ", cx, oy + scale * 4);
+
+    ctx.font = `${Math.round(14 * scale)}px PixelFont`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillStyle = "rgba(0,0,0,0.4)";
+    ctx.fillText(`BEST: ${bestScore}`, cx + 1 - scale * 5, oy + scale * 40 + 1);
+
+    ctx.fillStyle = "#FFE500";
+    ctx.fillText(`BEST: ${bestScore}`, cx - scale * 5, oy + scale * 40);
 }
 
 export function drawButtons() {

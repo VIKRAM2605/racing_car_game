@@ -3,6 +3,7 @@ import { checkCollision, currentInvinsibleTime, isInvinsible } from "./collision
 import { deductHealth } from "./health.js";
 import { canvas, ctx, isDead, keys, nativeHeight, nativeWidth, playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4, resetAll, resetIsDead, resetIsGameRunning, scale, setIsDead } from "./main.js";
 import { drawObstacles, drawScene, fuelStationMapForRefill, getRoadBelowPlayer, isPlayerOnTopOfRefillBox, posX, randomSceneGeneration, roads, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
+import { addBonuPoints, drawScore, resetScore, saveBestScore, updateScore } from "./score.js";
 import { stopEngine, updateEngineSound } from "./sound.js";
 import { player1Sprite, player2Sprite, player3Sprite, player4Sprite, summer } from "./SpriteCoordinates.js";
 import { clearIsActiveButton, startPageLoop } from "./startpage.js";
@@ -28,7 +29,7 @@ const steerReturn = 10;
 
 const lateralMaxSpeed = 320;
 const lateralFriction = 900;
-const lateralAccel = 1400;  
+const lateralAccel = 1400;
 
 export const player = {
     x: 0,
@@ -72,6 +73,8 @@ export function resetPlayer() {
     player.x = (nativeWidth * scale) / 2 - (summer["road"].w * scale) / 2 + playerSprite["up"].w * scale + 10 * scale;
     player.currentFacing = "up";
     currentIsDeadTimer = 0;
+    player.w = playerSprite["up"].w * scale,
+        player.h = playerSprite["up"].h * scale
 }
 
 let lastTime = 0;
@@ -160,14 +163,17 @@ export function updatePlayer(delta) {
         if (steeringAngle > 0) steeringAngle = Math.max(steeringAngle - steerReturn * delta, 0);
         if (steeringAngle < 0) steeringAngle = Math.min(steeringAngle + steerReturn * delta, 0);
     }
-    const road = getRoadBelowPlayer();
-    const roadRight = posX + road.w * scale;
 
-    if (player.x <= posX || player.x + playerSprite[player.currentFacing].w * scale >= roadRight) {
+    const roadW = summer["road"].w * scale;
+    const roadRight = posX + roadW;
+    const pWidth = playerSprite[player.currentFacing].w * scale;
+
+    if (player.x <= posX || player.x + pWidth >= roadRight) {
         currentOffRoadTime += delta;
         if (currentOffRoadTime >= maxOffRoadTime) {
             currentOffRoadTime -= maxOffRoadTime;
             deductHealth();
+            console.log("dirt");
         }
         player.fuel -= 0.01 * delta;
     } else {
@@ -237,13 +243,20 @@ export function gameLoop(currentTime) {
     drawFullUI(delta);
     drawObstacles();
     drawCars();
+    drawScore();
+
+    if (!isDead) {
+        updateScore(delta, player.speed);
+    }
 
     if (isDead) {
         currentIsDeadTimer += delta;
         if (currentIsDeadTimer > isDeadTimer) {
+            saveBestScore();
             stopGameLoop();
             resetIsDead();
             resetAll();
+            resetScore();
             resetIsGameRunning();
             clearIsActiveButton();
             requestAnimationFrame(startPageLoop);
@@ -257,8 +270,14 @@ export function gameLoop(currentTime) {
     const check = checkCollision(delta);
     if (check && !isDead) {
         deductHealth();
+        console.log("collsion")
     }
     if (isPlayerOnTopOfRefillBox()) {
+
+        if (player.fuel < 1) {
+            addBonuPoints(500);
+        }
+
         player.fuel = 1;
     }
     fuelStationMapForRefill();

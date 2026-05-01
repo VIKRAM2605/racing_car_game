@@ -122,7 +122,6 @@ export function initRoadPos() {
     gasStationMarking[2] = { x: rightLaneCenter - (stationMarking["60"].w * scale) / 2, y: null, sprite: stationMarking["60"], key: "60" };
     gasStationMarking[3] = { x: rightLaneCenter - (stationMarking["30"].w * scale) / 2, y: null, sprite: stationMarking["30"], key: "30" };
 
-    spawnGasStationObstacles();
 };
 
 export function resetScene() {
@@ -279,6 +278,7 @@ export function drawScene() {
     drawDetails();
     drawRoad();
     drawObstacles();
+    drawStationObtacles();
 };
 
 export function drawRoad() {
