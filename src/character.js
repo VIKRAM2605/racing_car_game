@@ -23,6 +23,10 @@ export let currentIsDeadTimer = 0;
 export let steeringAngle = 0;
 let lateralVelocity = 0;
 
+let offRoadIsInvinsible = false;
+let offRoadInvinsibleTime = 0;
+const offRoadInvinsibleDuration = 3;
+
 const maxSteer = 0.7;
 const steerSpeed = 8;
 const steerReturn = 10;
@@ -169,15 +173,26 @@ export function updatePlayer(delta) {
     const pWidth = playerSprite[player.currentFacing].w * scale;
 
     if (player.x <= posX || player.x + pWidth >= roadRight) {
+        if (offRoadIsInvinsible) {
+            offRoadInvinsibleTime += delta;
+            if (offRoadInvinsibleTime >= offRoadInvinsibleDuration) {
+                offRoadIsInvinsible = false;
+                offRoadInvinsibleTime = 0;
+            }
+        }
+
         currentOffRoadTime += delta;
-        if (currentOffRoadTime >= maxOffRoadTime) {
-            currentOffRoadTime -= maxOffRoadTime;
+        if (currentOffRoadTime >= maxOffRoadTime && !offRoadIsInvinsible) {
+            currentOffRoadTime = 0;
+            offRoadIsInvinsible = true;
+            offRoadInvinsibleTime = 0;
             deductHealth();
-            console.log("dirt");
         }
         player.fuel -= 0.01 * delta;
     } else {
         currentOffRoadTime = 0;
+        offRoadIsInvinsible = false;
+        offRoadInvinsibleTime = 0;
     }
 
     if (moveX === 0 || (moveX < 0 && lateralVelocity > 0) || (moveX > 0 && lateralVelocity < 0)) {
@@ -193,11 +208,13 @@ export function updatePlayer(delta) {
 };
 
 export function drawPlayer() {
-    if (isInvinsible) {
+    if (isInvinsible || offRoadIsInvinsible) {
         const blinkInterval = 0.1;
-        const shouldHide = Math.floor(currentInvinsibleTime / blinkInterval) % 2 === 0;
+        const blinkTime = isInvinsible ? currentInvinsibleTime : offRoadInvinsibleTime;
+        const shouldHide = Math.floor(blinkTime / blinkInterval) % 2 === 0;
         if (shouldHide) return;
     }
+
     ctx.imageSmoothingEnabled = false;
 
     const pos = playerSprite[player.currentFacing];
@@ -216,7 +233,7 @@ export function drawPlayer() {
 
     player.w = pos.w * scale;
     player.h = pos.h * scale;
-};
+}
 
 export function gameLoop(currentTime) {
     const dpr = window.devicePixelRatio || 1;
@@ -279,7 +296,7 @@ export function gameLoop(currentTime) {
         }
 
         player.fuel = 1;
-    }else{
+    } else {
         resetRefillBonus();
     }
     fuelStationMapForRefill();
