@@ -1,9 +1,11 @@
 # Car Infinite Riding game
  A top down riding/driving game where you dodge traffic, avoid obstacles and keep your fuel topped up as long as you can
 
+-*(Don't Ride offroad too long else you lose a heart)*
 -*(Score System : Try to get higher score. Score alone will motivate you. The speeder you move the more The score will be)*
 -*(Refill Your car from the gas station it will get spawned and you need to drive your car on top of it to refill)*
 -*(Refill Your car when your fuel meter is less than 30% to earn bonus score in the run)*
+
 
 ## Controls
 | key | Action |
