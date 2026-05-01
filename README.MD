@@ -1,5 +1,5 @@
 # Car Infinite Riding game
- A top down riding/driving game where you dodge traffic , avoid obstacles and keep your fuel topped up as long as ypu can
+ A top down riding/driving game where you dodge traffic , avoid obstacles and keep your fuel topped up as long as you can
 
 ## Controls
 | key | Action |
@@ -19,6 +19,7 @@
  - Gas station to refill your gas tank.
  - Health system with Invinsibility frames after taking damage.
  - When Selecting 2+ scenes it will randomly spawns them across the Start Page and in-game.
+ - Score gets added as you drive faster = more score and when refueling if your fuel meter is below 30% you will get a 500 bonus score added.
 
 ## Tech Stack
 - JavaScript(Vanilla)
