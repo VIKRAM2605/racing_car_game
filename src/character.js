@@ -3,7 +3,7 @@ import { checkCollision, currentInvinsibleTime, isInvinsible } from "./collision
 import { deductHealth } from "./health.js";
 import { canvas, ctx, isDead, keys, nativeHeight, nativeWidth, playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4, resetAll, resetIsDead, resetIsGameRunning, scale, setIsDead } from "./main.js";
 import { drawObstacles, drawScene, fuelStationMapForRefill, getRoadBelowPlayer, isPlayerOnTopOfRefillBox, posX, randomSceneGeneration, roads, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
-import { addBonuPoints, drawScore, resetScore, saveBestScore, updateScore } from "./score.js";
+import { addBonuPoints, drawScore, resetRefillBonus, resetScore, saveBestScore, triggerRefillBonus, updateScore } from "./score.js";
 import { stopEngine, updateEngineSound } from "./sound.js";
 import { player1Sprite, player2Sprite, player3Sprite, player4Sprite, summer } from "./SpriteCoordinates.js";
 import { clearIsActiveButton, startPageLoop } from "./startpage.js";
@@ -274,11 +274,13 @@ export function gameLoop(currentTime) {
     }
     if (isPlayerOnTopOfRefillBox()) {
 
-        if (player.fuel < 1) {
-            addBonuPoints(500);
+        if (player.fuel < 0.3) {
+            triggerRefillBonus();
         }
 
         player.fuel = 1;
+    }else{
+        resetRefillBonus();
     }
     fuelStationMapForRefill();
 
