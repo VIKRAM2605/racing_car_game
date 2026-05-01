@@ -1,11 +1,15 @@
 import { player } from "./character.js";
-import { canvas, ctx, npcSpriteSheet, randomInt } from "./main.js";
+import { canvas, ctx, npcSpriteSheet, randomInt, scale } from "./main.js";
+import { posX } from "./scene.js";
 import { npc1Sprite, npc2Sprite, npc3Sprite, npc4Sprite, summer } from "./SpriteCoordinates.js";
 
 export let cars = [];
-let spawnDelay = 2;
+let spawnDelay = 4;
 let currentSpawn = 0;
+let elapsedTime = 0;
 let lanes = [0, 0];
+
+const roadOffset = 0.75;
 
 const facing = ["up", "down"];
 const spriteMap = {
@@ -16,8 +20,8 @@ const spriteMap = {
 }
 
 export function initLanes() {
-    const lane1 = canvas.width / window.devicePixelRatio / 2 - (summer["road"].sw / 2);
-    const lane2 = lane1 + (summer["road"].sw / 2)
+    const lane1 = posX;
+    const lane2 = posX + (summer["road"].w * scale / 2)
 
     lanes[0] = lane1;
     lanes[1] = lane2;
@@ -25,69 +29,117 @@ export function initLanes() {
 
 export function resetCars() {
     cars = [];
+    spawnDelay = 4;
+    elapsedTime = 0;
+    currentSpawn = 0;
+}
+
+export function increaseTraffic(delta) {
+    elapsedTime += delta;
+
+    spawnDelay = Math.max(0.8, 4 - Math.floor(elapsedTime / 20) * 0.4)
+}
+
+export function wouldCollide(x, y, w, h, facing) {
+    const buffer = scale * 10;
+    for (const car of cars) {
+        if (car.facing !== facing) continue;
+        const overlapX = x < car.x + car.w && x + w > car.x;
+        const overlapY = y < car.y + car.h + buffer && y + h + buffer > car.y;
+        if (overlapX && overlapY) return true;
+    }
+    return false;
 }
 
 export function spawnCars(delta) {
+    increaseTraffic(delta);
     currentSpawn += delta;
-    if (currentSpawn > spawnDelay) {
-        currentSpawn = 0;
-        let laneIndex = randomInt(0, lanes.length - 1);
-        let lane = lanes[laneIndex];
-        let y;
 
-        let currentFacing;
+    if (currentSpawn < spawnDelay) return;
 
-        let spriteNumber = randomInt(1, Object.keys(spriteMap).length).toString();
+    currentSpawn = 0;
 
-        let sprite;
+    const fullRoadW = summer["road"].w * scale;
+    const laneW = fullRoadW / 2;
 
+    const usableRoadW = fullRoadW * roadOffset;
+    const dirtPerSide = (fullRoadW - usableRoadW) / 2;
+
+    let attempts = 0;
+    while (attempts < 10) {
+        attempts++;
+        const laneIndex = randomInt(0, lanes.length - 1);
+        const lane = lanes[laneIndex];
+        const spriteNumber = randomInt(1, Object.keys(spriteMap).length).toString();
+
+        const facing = laneIndex === 0 ? "up" : "down";
+        const sprite = spriteMap[spriteNumber][facing];
+
+        const sw = sprite.w * scale;
+        const sh = sprite.h * scale;
+
+        let roadCenterX;
         if (laneIndex === 0) {
-            y = -500;
+            const roadStart = lane + dirtPerSide;
+            const roadWidth = laneW - dirtPerSide;
+            roadCenterX = roadStart + (roadWidth) / 2;
+        } else {
+            const roadStart = lane;
+            const roadWidth = laneW - dirtPerSide;
+            roadCenterX = roadStart + (roadWidth) / 2;
+        }
 
-            sprite = spriteMap[spriteNumber]["up"];
+        const x = roadCenterX - sw / 2;
+        let y;
+        let carSpeed;
 
-            currentFacing = "up";
+        const spawnAboveScreen = -(sh + 50);
+        const spawnBelowScreen = (canvas.height / window.devicePixelRatio) + 50
 
-            if (spriteNumber === "1" || spriteNumber === "3") {
-                lane += sprite.sw + 22;
+        if (facing === "up") {
+            carSpeed = randomInt(150, 380);
+
+            if (carSpeed > player.speed) {
+                y = spawnBelowScreen;
             } else {
-                lane += sprite.sw + 28;
+                y = spawnAboveScreen;
             }
         } else {
-            y = -500;
-
-            sprite = spriteMap[spriteNumber]["down"];
-
-            currentFacing = "down";
-
-            if (spriteNumber === "1" || spriteNumber === "3") {
-                lane += sprite.sw - 5;
-            } else {
-                lane += sprite.sw + 5;
-            }
+            carSpeed = randomInt(150, 300);
+            y = spawnAboveScreen;
         }
+
+        if (wouldCollide(x, y, sw, sh, facing)) continue;
 
         cars.push({
-            x: lane,
+            x: x,
             y: y,
             sprite: sprite,
-            facing: currentFacing,
-            w: sprite.sw,
-            h: sprite.sh
-        })
+            facing: facing,
+            w: sw,
+            h: sh,
+            speed: carSpeed
+        });
+        break;
     }
-};
+
+}
 
 export function updateCars(delta) {
+
     for (let i = 0; i < cars.length; i++) {
-        if (cars[i].facing === "up") {
-            cars[i].y += (player.speed - 250) * delta;
+        const car = cars[i];
+
+        const carSpeed = car.speed || 150;
+
+        if (car.facing === "up") {
+            car.y += (player.speed - carSpeed) * scale * delta;
         } else {
-            cars[i].y += (player.speed + 350) * delta;
+            car.y += (player.speed + carSpeed) * scale * delta;
         }
     }
 
-    cars = cars.filter(car => car.y < canvas.height / window.devicePixelRatio + 1000);
+    cars = cars.filter(car => car.y < canvas.height / window.devicePixelRatio + 1000 && car.y > -1000);
 
 };
 
@@ -97,7 +149,7 @@ export function drawCars() {
         ctx.drawImage(
             npcSpriteSheet,
             car.sprite.x, car.sprite.y, car.sprite.w, car.sprite.h,
-            car.x, car.y, car.sprite.sw, car.sprite.sh
+            car.x, car.y, car.sprite.w * scale, car.sprite.h * scale
         );
     }
 }

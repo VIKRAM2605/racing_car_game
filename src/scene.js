@@ -90,12 +90,6 @@ export function initRoadPos() {
 
     refillRoads();
 
-    // const roadsNeeded = Math.ceil((screenH * 3) / road.stackHeight * scale) + 2;
-    // for (let i = 0; i < roadsNeeded; i++) {
-    //     roads.push("road");
-    //     totalRoadH += road.stackHeight * scale;
-    // }
-
     sceneNeedY = Math.ceil((screenH * 3) / (detailsMap[currentScene]["details1"].h * scale)) + 2;
     sceneNeedX = Math.ceil(((screenW / 2 - (road.w * scale) / 2) * 3) / (detailsMap[currentScene]["details1"].w * scale)) + 2;
 
@@ -251,7 +245,7 @@ export function drawRoad() {
         const road = summer[roads[i]];
         const sheet = sceneSheet[roads[i]];
         const drawY = positions[i] - (road.h * scale - road.stackHeight * scale);
-        ctx.drawImage(sheet, road.x, road.y, road.w, road.h, posX, drawY, road.w * scale, road.h * scale);
+        ctx.drawImage(sheet, road.x, road.y, road.w, road.h, Math.floor(posX), Math.floor(drawY) , Math.ceil(road.w * scale), Math.ceil(road.h * scale));
         if (roads[i + 1] === "gasStation") {
             drawArrowToStation(drawY);
             drawStationObtacles(drawY);
@@ -405,8 +399,8 @@ export function drawPetrolPumpMarking(distance, y) {
 
 export function drawArrowToStation(y) {
     const sprite = stationMarking["arrowRight"];
-    const rightLaneCenter = posX + summer["road"].sw * 0.75;
-    ctx.drawImage(stationMarkingSpriteSheet, sprite.x, sprite.y, sprite.w, sprite.h, rightLaneCenter + (sprite.w * scale) / 2, y - sprite.sh * 7, sprite.w * scale, sprite.h * scale);
+    const rightLaneCenter = posX + summer["road"].w * scale * 0.75;
+    ctx.drawImage(stationMarkingSpriteSheet, sprite.x, sprite.y, sprite.w, sprite.h, rightLaneCenter + (sprite.w * scale) / 2, y - sprite.h * scale * 7, sprite.w * scale, sprite.h * scale);
 };
 
 export function fuelStationMapForRefill() {
@@ -425,6 +419,6 @@ export function isPlayerOnTopOfRefillBox() {
             playRefillSound();
             return true;
         }
-        return false;
     }
+    return false;
 };

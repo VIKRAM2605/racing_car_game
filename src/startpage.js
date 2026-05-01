@@ -41,7 +41,6 @@ export function startPageLoop(currentTime) {
     randomSceneGeneration(delta);
 
     drawScene();
-    drawObstacles();
     drawCars();
 
     drawPanel();

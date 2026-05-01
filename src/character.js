@@ -5,7 +5,7 @@ import { canvas, ctx, isDead, keys, nativeHeight, nativeWidth, playerSpriteSheet
 import { drawObstacles, drawScene, fuelStationMapForRefill, getRoadBelowPlayer, isPlayerOnTopOfRefillBox, posX, randomSceneGeneration, roads, spawnObstacles, updateDetails, updateObstacles, updateRoad } from "./scene.js";
 import { stopEngine, updateEngineSound } from "./sound.js";
 import { player1Sprite, player2Sprite, player3Sprite, player4Sprite, summer } from "./SpriteCoordinates.js";
-import { startPageLoop } from "./startpage.js";
+import { clearIsActiveButton, startPageLoop } from "./startpage.js";
 import { drawFullUI, drawIsDeadTitle } from "./ui.js";
 
 export let defaultPlayerSheet;
@@ -28,7 +28,7 @@ const steerReturn = 10;
 
 const lateralMaxSpeed = 320;
 const lateralFriction = 900;
-const lateralAccel = 1400;
+const lateralAccel = 1400;  
 
 export const player = {
     x: 0,
@@ -55,6 +55,7 @@ export function initPlayer() {
     player.x = (nativeWidth * scale) / 2 - (summer["road"].w * scale) / 2 + playerSprite["up"].w * scale + 10 * scale;
     player.y = (nativeHeight * scale) / 2 + 50 * scale;
     playerSheet = [playerSpriteSheet1, playerSpriteSheet2, playerSpriteSheet3, playerSpriteSheet4];
+
 };
 
 export const playerKey = [player1Sprite, player2Sprite, player3Sprite, player4Sprite];
@@ -180,7 +181,7 @@ export function updatePlayer(delta) {
 
     lateralVelocity = Math.max(-lateralMaxSpeed, Math.min(lateralMaxSpeed, lateralVelocity));
 
-    player.x += lateralVelocity * delta;
+    player.x += lateralVelocity * scale * delta;
 
     updateEngineSound();
 };
@@ -244,6 +245,7 @@ export function gameLoop(currentTime) {
             resetIsDead();
             resetAll();
             resetIsGameRunning();
+            clearIsActiveButton();
             requestAnimationFrame(startPageLoop);
             return;
         }

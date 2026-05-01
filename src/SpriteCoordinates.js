@@ -48,8 +48,8 @@ export const npc4Sprite = {
 //scenes
 export const summer = {
     details: { x: 0, y: 0, w: 64, h: 16 },
-    road: { x: 0, y: 0, w: 64, h: 64, stackHeight: 64 },
-    gasStation: { x: 0, y: 0, w: 128, h: 304, stackHeight: 64 },
+    road: { x: 0, y: 0, w: 64, h: 64, stackHeight: 63 },
+    gasStation: { x: 0, y: 0, w: 128, h: 304, stackHeight: 63 },
 };
 
 export const summerDetails = {
@@ -77,13 +77,13 @@ export const desertDetails = {
 };
 
 export const winter = {
-    road: { x: 0, y: 0, w: 64, h: 64, stackHeight: 64 },
-    gasStation: { x: 0, y: 0, w: 128, h: 304, stackHeight: 64 }
+    road: { x: 0, y: 0, w: 64, h: 64, stackHeight: 63 },
+    gasStation: { x: 0, y: 0, w: 128, h: 304, stackHeight: 63 }
 };
 
 export const desert = {
-    road: { x: 0, y: 0, w: 64, h: 64, stackHeight: 64 },
-    gasStation: { x: 0, y: 0, w: 128, h: 304, stackHeight: 64 }
+    road: { x: 0, y: 0, w: 64, h: 64, stackHeight: 63 },
+    gasStation: { x: 0, y: 0, w: 128, h: 304, stackHeight: 63 }
 }
 
 export const ui = {
@@ -152,14 +152,6 @@ export const stationMarking = {
     "60": { x: 33, y: 1, w: 14, h: 14 },
     "30": { x: 49, y: 1, w: 14, h: 14 }
 };
-
-// export const startPageUI = {
-//     "start": { x: 0, y: 24, w: 32, h: 8 },
-//     "scene": { x: 0, y: 36, w: 32, h: 8 },
-//     "cars": { x: 0, y: 49, w: 32, h: 8 },
-//     //"shop": { x: 0, y: 62, w: 32, h: 8, sw: 32 * (scale + 2), sh: 8 * (scale + 2) }
-//     "guide": { x: 0, y: 117, w: 32, h: 8 }
-// };
 
 export const guiSprites = {
     panel: { x: 32, y: 1120, w: 183, h: 280 },

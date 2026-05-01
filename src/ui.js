@@ -15,6 +15,8 @@ const playerIconArray = ["lemon", "cherry", "slime", "carrot"];
 
 export let playerIconSheetMap;
 
+let uiScale;
+
 export function initPlayerIconSheet() {
     playerIconSheetMap = {
         "lemon": lemonSpriteSheet,
@@ -22,6 +24,8 @@ export function initPlayerIconSheet() {
         "slime": slimeSpriteSheet,
         "carrot": carrotSpriteSheet
     };
+
+    uiScale = scale * 2;
 }
 
 export function randomPlayerIcon() {
@@ -39,10 +43,12 @@ export function drawFullUI(delta) {
 
 export function mainUI() {
     const sprite = ui["full"];
+    const screenW = canvas.width / window.devicePixelRatio;
+    const screenH = canvas.height / window.devicePixelRatio;
     ctx.drawImage(
         fullSpriteSheet,
         sprite.x, sprite.y, sprite.w, sprite.h,
-        canvas.width / window.devicePixelRatio - sprite.sw, 0, sprite.sw, canvas.height / window.devicePixelRatio
+        screenW - sprite.w * uiScale, 0, sprite.w * uiScale, screenH
     )
 };
 
@@ -51,19 +57,27 @@ export function drawPlayerIndicator() {
     ctx.drawImage(
         playerIndicatorSpriteSheet,
         sprite.x, sprite.y, sprite.w, sprite.h,
-        player.x + (playerSprite[player.currentFacing].sw / 2) - (sprite.sw / 2) - scale * 0.3, player.y - scale * 11, sprite.sw, sprite.sh
+        player.x + (playerSprite[player.currentFacing].w * scale / 2) - (sprite.w * scale / 2) - scale * 0.3, player.y - scale * 11, sprite.w * scale, sprite.h * scale
     );
 };
 
 export function drawPlayerIcon(delta) {
+
     const sprite = playerIcons[currentPlayerIcon];
     const currentSprite = sprite[currentFrame];
     const sheet = playerIconSheetMap[currentPlayerIcon];
+    const screenW = canvas.width / window.devicePixelRatio;
+    const screenH = canvas.height / window.devicePixelRatio;
+
+    const uiX = screenW - ui["full"].w * uiScale;
+    const uiCx = uiX + (ui["full"].w * uiScale) / 2;
+
     ctx.drawImage(
         sheet,
         currentSprite.x, currentSprite.y, currentSprite.w, currentSprite.h,
-        canvas.width / window.devicePixelRatio - ui["full"].sw + ui["full"].sw / 2 - currentSprite.sw / 2, (canvas.height / window.devicePixelRatio) * 0.15, currentSprite.sw, currentSprite.sh
+        uiCx - (currentSprite.w * uiScale) / 2, screenH * 0.15, currentSprite.w * uiScale, currentSprite.h * uiScale
     );
+
     animationSpeed -= delta;
     if (animationSpeed <= 0) {
         animationSpeed = 0.3;
@@ -72,31 +86,37 @@ export function drawPlayerIcon(delta) {
 };
 
 export function drawSpeed() {
-    displaySpeed += (player.speed - displaySpeed) * 1
-    const speedInString = Math.floor(displaySpeed).toString();
 
-    const uiX = canvas.width / window.devicePixelRatio - ui["full"].sw;
-    const height = (canvas.height / window.devicePixelRatio) * 0.50;
+    const screenW = (canvas.width / window.devicePixelRatio);
+    const screenH = (canvas.height / window.devicePixelRatio);
+
+    const uiX = screenW - (ui["full"].w * uiScale);
+    const uiCx = uiX + (ui["full"].w * uiScale) / 2;
+
+    displaySpeed += (player.speed - displaySpeed) * 1;
+    const speedInString = Math.floor(displaySpeed).toString();
 
     let totalW = 0;
 
     for (let i = 0; i < speedInString.length; i++) {
-        totalW += numbers[speedInString[i]].sw
+        totalW += (numbers[speedInString[i]].w * uiScale);
     }
 
-    ctx.fillStyle = "#141414";
-    ctx.fillRect(uiX, height - scale, ui["full"].sw, numbers["0"].sh + scale * 3.5);
+    const drawY = screenH * 0.5;
 
-    let currentX = uiX + (ui["full"].sw / 2) - (totalW) / 2;
+    ctx.fillStyle = "#141414";
+    ctx.fillRect(uiX, drawY - uiScale, ui["full"].w * uiScale, numbers["0"].h * uiScale + uiScale * 3.5);
+
+    let currentX = uiCx - totalW / 2;
 
     for (let i = 0; i < speedInString.length; i++) {
         const sprite = numbers[speedInString[i]];
         ctx.drawImage(
             numbersSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
-            currentX, height, sprite.sw, sprite.sh
+            currentX, drawY, sprite.w * uiScale, sprite.h * uiScale
         );
-        currentX += sprite.sw - 1;
+        currentX += (sprite.w * uiScale - 1);
     }
 };
 
@@ -104,22 +124,22 @@ export function drawFuelBar() {
     const screenW = canvas.width / window.devicePixelRatio;
     const screenH = canvas.height / window.devicePixelRatio;
     const sprite = ui["fuelBar"];
+    const uiX = screenW - ui["full"].w * uiScale;
 
-    const drawnW = ui["full"].sw * 0.19;
-    const drawnH = sprite.sh * 1.55;
 
-    const uiX = screenW - ui["full"].sw;
+    const drawnW = ui["full"].w * uiScale * 0.19;
+    const drawnH = screenH * 0.289;
 
-    const drawX = uiX + ui["full"].sw - drawnW - ui["full"].sw * 0.155;
-    const drawY = screenH - drawnH * 1.21;
+    const drawX = uiX + ui["full"].w * uiScale - drawnW - ui["full"].w * uiScale * 0.155;
+    const drawY = screenH * 0.65;
 
-    const filledH = drawnH * player.fuel;
-    const filledSrcH = sprite.h * player.fuel;
+    const srcH = sprite.h * player.fuel;
+    const dstH = drawnH * player.fuel;
 
     ctx.drawImage(
         fuelBarSpriteSheet,
-        sprite.x, sprite.y, sprite.w, filledSrcH,
-        drawX, drawY + (drawnH - filledH), drawnW, filledH
+        sprite.x, sprite.y, sprite.w, srcH,
+        drawX, drawY + (drawnH - dstH), drawnW, dstH
     );
 
 };
@@ -129,34 +149,36 @@ export function drawHealth() {
     const screenW = canvas.width / window.devicePixelRatio;
     const screenH = canvas.height / window.devicePixelRatio;
 
-    const uiX = screenW - ui["full"].sw;
+    const uiX = screenW - ui["full"].w * uiScale;
+    const uiCx = uiX + (ui["full"].w * uiScale) / 2;
 
-    let drawX = uiX + ui["full"].sw * 0.2;
+    const totalHealthW = health.reduce((sum, h) => sum + damageSprite[h.toString()].w * uiScale + uiScale * 3, 0);
+    let drawX = uiCx - totalHealthW / 2;
     const drawY = screenH * 0.38;
 
     ctx.fillStyle = "#141414";
-    ctx.fillRect(uiX, screenH * 0.36, ui["full"].sw, damageSprite["1"].sh + scale * 6)
+    ctx.fillRect(uiX, drawY - uiScale * 4, ui["full"].w * uiScale, damageSprite["1"].h * uiScale + uiScale * 6)
 
     for (let i = 0; i < health.length; i++) {
         const sprite = damageSprite[health[i].toString()];
-        const offset = (damageSprite["1"].sh - sprite.sh) / 2;
+        const offset = (damageSprite["1"].h * uiScale - sprite.h * uiScale) / 2;
         ctx.drawImage(
             damageSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
-            drawX, drawY + offset, sprite.sw, sprite.sh
+            drawX, drawY + offset, sprite.w * uiScale, sprite.h * uiScale
         );
-        drawX += sprite.sw + scale * 3;
+        drawX += sprite.w * uiScale + uiScale * 3;
     }
 };
 
 export function drawIsDeadTitle(delta) {
-    const totalW = canvas.width / window.devicePixelRatio;
+    const screenW = canvas.width / window.devicePixelRatio;
+    const screenH = canvas.height / window.devicePixelRatio;
+
     ctx.drawImage(
         gameOverSpriteSheet,
         gameOverSprite.x, gameOverSprite.y, gameOverSprite.w, gameOverSprite.h,
-        totalW / 2 - gameOverSprite.sw / 2, canvas.height / window.devicePixelRatio / 2 - gameOverSprite.sh / 2,
-        gameOverSprite.sw, gameOverSprite.sh
+        screenW / 2 - (gameOverSprite.w * scale) / 2, screenH / 2 - (gameOverSprite.h * scale) / 2,
+        gameOverSprite.w * scale, gameOverSprite.h * scale
     );
 }
-
-console.log(window.innerWidth, window.innerHeight)
